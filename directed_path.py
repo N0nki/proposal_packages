@@ -2,172 +2,111 @@
 
 """
 author Mio Kinno
-date 2016.10.31
-file directed_path_v4_1.py
+date 2016.10.24
+file directed_path_v3.py
 
 graphillion.Graphset.pathsメソッドが求めたパスからグラフの方向性を考慮したパスを取り出す
 
 # 動作概要
-directed_path_v4.pyと同じ
-ただしNerworkXを一切使用しない実装
+v2の改良版
+除外すべき要素からなるグラフセットを作成しGraphSet.excludingの引数に渡すように変更
+要素はリンクであってもサブグラフとして除外する
+Graphillionが扱うリンクは(i,j)の形式だがこれを[(i,j)]とすることでサブグラフとすることができる
 """
 
 from itertools import combinations
 
 from graphillion import GraphSet
+import networkx as nx
 
-def append_virtual_nodes(edgelist):
-    """
-    仮想ノードを追加したグラフの辺のリストを返す
-
-    arguments:
-    * edgelist(edge list)
-      グラフを構成する重み付きの辺のタプルを要素とするリスト
-      ノードのラベルは必ず文字列とすること
-
-    returns:
-    * virtual_nodes_Graph(edge list)
-      仮想ノードを追加した重み付きの辺のタプルを要素とするリスト
-    """
-    virtual_nodes_Graph = []
-    for i,j,cost in edgelist:
-        v = i + "_" + j
-        virtual_nodes_Graph.append((i,v,cost))
-        virtual_nodes_Graph.append((v,j,0))
-    return virtual_nodes_Graph
-
-def get_virtual_nodes(edgelist):
-    """
-    仮想ノードのリストを返す
-
-    arguments:
-    * edgelist(edge list)
-      グラフを構成する重み付きの辺のタプルを要素とするリスト
-
-    returns:
-    * virtual_nodes(node list)
-      仮想ノードを要素とするリスト
-    """
-    virtual_nodes = []
-    for i,j,cost in edgelist:
-        v = i + "_" + j
-        virtual_nodes.append(v)
-    return virtual_nodes
-
-def get_original_nodes(edgelist):
-    """
-    仮想ノード追加前のグラフのノードのリストを返す
-
-    arguments:
-    * edgelist(edge list)
-      グラフを構成する重み付きの辺のタプルを要素とするリスト
-
-    returns:
-    * nodes(node list)
-      仮想ノード追加前のグラフのノードのリスト
-    """
-    edges = [[i,j] for i,j,cost in edgelist]
-    return set(reduce(lambda x,y: x + y, edges))
-
-def get_internal_nodes(edgelist, node):
-    """
-    nodeへの流入リンクを構成するノードのリストを返す
-
-    arguments:
-    * edgelist(edge list)
-      グラフを構成する重み付きの辺のタプルを要素とするリスト
-      ノードのラベルは必ず文字列とすること
-    * node(node label)
-    
-    returns:
-    * nodes(node list)
-      nodeへの流入リンクを構成するノードのリスト
-    """
-    virtual_nodes = get_virtual_nodes(edgelist)
-    nodes = []
-    for v in virtual_nodes:
-        i, j = v.split(("_"))
-        if node == j:
-            nodes.append(v)
-    # func = lambda v: v.split("_")
-    # nodes = [i+"_"+j for i,j in map(func, virtual_nodes) if node == j]
-    return nodes
-
-def internal_links(edgelist, node):
+def start_node_internal_links(DiGraph, start_node):
     """
     rule1
 
     arguments:
-    * edgelist(edge list)
-      グラフを構成する重み付きの辺のタプルを要素とするリスト
+    * DiGraph(networkx directed Graph object)
+    * start_node(start node label)
 
     returns:
-    * internal_links(GraphSet)
-      rule1にあてはまるサブグラフからなるGraphSet
+    * internal_links(list)
+      rule1にあてはまるリンクからなるサブグラフを格納したリスト
     """
-    nodes = get_internal_nodes(edgelist, node)
-    il = [[(v,node)] for v in nodes]
-    return GraphSet(il)
+    internal_links = [[(predecessor, start_node)]\
+                      for predecessor in DiGraph.predecessors_iter(start_node)]
+    return internal_links
 
-def two_internal_links_subgraph(edgelist, node):
+def subgraph_by_two_internal_links(DiGraph, node):
     """
     rule2
 
     arguments:
-    * edgelist(edge list)
-      グラフを構成する重み付きの辺のタプルを要素とするリスト
+    * DiGraph(networkx directed Graph object)
+    * node(node label)
 
     returns:
-    * subgraphs(GraphSet)
-      rule2にあてはまるサブグラフからなるGraphSet
+    * subgraphs(list)
+      rule2にあてはまるサブグラフを格納したリスト
     """
-    nodes = get_internal_nodes(edgelist, node)
-    if len(nodes) < 2:
+    internal_links = [link[0] for link in start_node_internal_links(DiGraph, node)]
+    if len(internal_links) < 2:
         return
-    connected_nodes = [[node, v1, v2] for v1,v2 in combinations(nodes, 2)]
-    subgraphs = GraphSet()
-    for components in connected_nodes:
-        subgraphs = subgraphs | GraphSet({}).graph_size(2).connected_components(components)
+    subgraphs = [[link1, link2] for link1,link2 in combinations(internal_links, 2)]
     return subgraphs
 
-def directed_paths(edgelist, start_node, target_node):
+def collect_invalid_direction_elms(DiGraph, start_node):
+    """
+    rule1とrule2の結果をまとめる
+
+    arguments:
+    * DiGraph(networkx directed Graph object)
+    * start_node(node label)
+
+    returns:
+    * elms(list)
+      rule1とrule2にあてはまる除外すべきグラフの要素を格納したリスト
+    """
+    rule1 = start_node_internal_links(DiGraph, start_node)
+    rule1_nodes = [start_node] + DiGraph.predecessors(start_node)
+    rule2_nodes = set(DiGraph.nodes()) - set(rule1_nodes)
+    elms = []
+    for node in rule2_nodes:
+        rule2 = subgraph_by_two_internal_links(DiGraph, node)
+        if rule2 is None: continue
+        for subgraph in rule2:
+            elms.append(subgraph)
+    if len(rule1) == 0:
+        return elms
+    for e in rule1:
+        return elms.append(e)
+
+def directed_paths(DiGraph, start_node, target_node):
     """
     有効性を考慮したパスだけを含むグラフセットを返す
 
     arguments:
-    * edgelist(edge list)
-      グラフを構成する重み付きの辺のタプルを要素とするリスト
+    * DiGraph(networkx directed Graph object)
+    * start_node(start node label)
+    * target_node(target node label)
 
     returns:
-    * di_paths(GraphSet)
+    * di_paths(graphillion.GraphSet)
       有効性を考慮したパスだけを含むグラフセット
     """
-    rule1 = internal_links(edgelist, start_node)
-    rule2_nodes = get_original_nodes(edgelist) - {start_node, target_node}
-    rule2 = GraphSet()
-    for node in rule2_nodes:
-        subgraphs = two_internal_links_subgraph(edgelist, node)
-        if subgraphs is None: continue
-        rule2 = rule2 | subgraphs
-    all_elms = rule1 | rule2
-
-    di_paths = GraphSet.paths(start_node, target_node).excluding(all_elms)
+    di_paths = GraphSet.paths(start_node, target_node)
+    elms = collect_invalid_direction_elms(DiGraph, start_node)
+    di_paths = di_paths.excluding(GraphSet(elms))
     return di_paths
 
 if __name__ == "__main__":
     # 動作確認
-    edgelist = [(u"1",u"2",1),(u"1",u"3",2),(u"2",u"3",3),(u"2",u"4",4),(u"3",u"4",5),
-                (u"2",u"1",-1),(u"3",u"1",-2),(u"3",u"2",-3),(u"4",u"2",-4),(u"4",u"3",-5)]
-    v = get_virtual_nodes(edgelist)
-    vg = append_virtual_nodes(edgelist)
-    # DiG = nx.DiGraph()
-    # DiG.add_weighted_edges_from(vg)
-    GraphSet.set_universe(vg)
-    print "original nodes", get_original_nodes(edgelist)
-    print "virtual_nodes", get_virtual_nodes(edgelist)
-    print "internal nodes", get_internal_nodes(edgelist, u"2")
-    print "internal links", internal_links(edgelist, u"3")
-    print "subgraphs", two_internal_links_subgraph(edgelist, u"1")
-    # print "directed paths", directed_paths(edgelist, u"1", u"2")
-    for path in directed_paths(edgelist, u"1", u"2"):
+    G = nx.DiGraph(data=[("a","b"), ("a","d"), ("b","c"), ("b","e"),
+                         ("d","c"), ("d", "e"), ("e","f"), ("f","c")])
+    GraphSet.set_universe(G.edges())
+    print start_node_internal_links(G, "b")
+    print subgraph_by_two_internal_links(G, "c")
+    print collect_invalid_direction_elms(G, "b")
+    print directed_paths(G, "b", "c")
+    print "the following results are directed_paths of start node to target node"
+    for path in directed_paths(G, "b", "c"):
         print path
+
