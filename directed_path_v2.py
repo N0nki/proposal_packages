@@ -10,7 +10,7 @@ graphillion.Graphset.pathsメソッドが求めたパスからグラフの方向
 
 # 動作概要
 branch two_virtual_nodes_NetworkXと動作は同じだが
-NerworkXを一切使用しない実装
+NetworkXを一切使用しない実装
 不要なサブグラフのグラフセットの作成をまとめて行うことで高速化
 
 # 使い方
