@@ -3,13 +3,14 @@
 """
 author Mio Kinno
 date 2016.10.31
-file directed_path_v4_1.py
+branch master
+file directed_path.py
 
 graphillion.Graphset.pathsメソッドが求めたパスからグラフの方向性を考慮したパスを取り出す
 
 # 動作概要
-directed_path_v4.pyと同じ
-ただしNerworkXを一切使用しない実装
+branch two_virtual_nodes_NetworkXと動作は同じだが
+NerworkXを一切使用しない実装
 """
 
 from itertools import combinations
@@ -160,14 +161,11 @@ if __name__ == "__main__":
                 (u"2",u"1",-1),(u"3",u"1",-2),(u"3",u"2",-3),(u"4",u"2",-4),(u"4",u"3",-5)]
     v = get_virtual_nodes(edgelist)
     vg = append_virtual_nodes(edgelist)
-    # DiG = nx.DiGraph()
-    # DiG.add_weighted_edges_from(vg)
     GraphSet.set_universe(vg)
-    print "original nodes", get_original_nodes(edgelist)
-    print "virtual_nodes", get_virtual_nodes(edgelist)
-    print "internal nodes", get_internal_nodes(edgelist, u"2")
-    print "internal links", internal_links(edgelist, u"3")
-    print "subgraphs", two_internal_links_subgraph(edgelist, u"1")
-    # print "directed paths", directed_paths(edgelist, u"1", u"2")
+    # print "original nodes", get_original_nodes(edgelist)
+    # print "virtual_nodes", get_virtual_nodes(edgelist)
+    # print "internal nodes", get_internal_nodes(edgelist, u"2")
+    # print "internal links", internal_links(edgelist, u"3")
+    # print "subgraphs", two_internal_links_subgraph(edgelist, u"1")
     for path in directed_paths(edgelist, u"1", u"2"):
         print path
