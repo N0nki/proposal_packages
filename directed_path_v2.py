@@ -128,7 +128,7 @@ def two_internal_links_subgraph(edgelist, node):
 
 def directed_paths(edgelist, start_node, target_node):
     """
-    rule1とrul2にあてはまる要素をまとめたリストを返す
+    有効性を考慮したパスだけを含むグラフセットを返す
 
     arguments:
     * edgelist(edge list)
@@ -137,8 +137,8 @@ def directed_paths(edgelist, start_node, target_node):
     * target_node(node label)
 
     returns:
-    * elms(list)
-      rule1とrule2にあてはまる除外すべきグラフの要素を格納したリスト
+    * di_paths(GraphSet)
+      有効性を考慮したパスだけを含むグラフセット
     """
     rule1 = internal_links(edgelist, start_node)
     rule2_nodes = get_original_nodes(edgelist) - {start_node, target_node}

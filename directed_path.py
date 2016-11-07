@@ -11,6 +11,7 @@ graphillion.Graphset.pathsメソッドが求めたパスからグラフの方向
 # 動作概要
 branch two_virtual_nodes_NetworkXと動作は同じだが
 NerworkXを一切使用しない実装
+ループのなかでグラフセットを生成する処理が多いため非常に遅い
 """
 
 from itertools import combinations

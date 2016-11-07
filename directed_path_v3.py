@@ -3,7 +3,7 @@
 """
 author Mio Kinno
 date 2016.11.1
-branch single_virtual_node
+branch master
 file directed_path_v3.py
 
 graphillion.Graphset.pathsメソッドが求めたパスからグラフの方向性を考慮したパスを取り出す
