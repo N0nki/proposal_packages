@@ -7,9 +7,6 @@ file dat_utils.py
 
 モデルデータの各パラメータを取り出し、
 Pythonで使えるように加工する
-
-リファクタリング
-セミコロンまで読み込む処理を独立させた
 """
 
 """
@@ -132,6 +129,11 @@ class Dat:
         return matched
 
     def __get_attr3(self, start, target):
+        """
+        parameter traffic
+        returns:
+        * タプル(i,j)を要素とするリスト
+        """
         start_nodes = [node for node in\
                        self.read_params(start, lambda node: int(node[1]))]
         target_nodes = [node for node in\
