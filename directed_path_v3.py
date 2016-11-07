@@ -2,7 +2,7 @@
 
 """
 author Mio Kinno
-date 2016.10.31
+date 2016.11.1
 branch single_virtual_node
 file directed_path_v3.py
 

@@ -2,7 +2,7 @@
 
 """
 author Mio Kinno
-date 2016.10.31
+date 2016.11.7
 branch master
 file directed_path_v2.py
 
