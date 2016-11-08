@@ -90,7 +90,7 @@ def append_virtual_nodes(edgelist):
     virtual_nodes_Graph = []
     for link1,link2 in d.values():
         i, j, cost = link2[0], link2[1], link2[2]
-        v = i + "_" + j
+        v = (i,j)
         virtual_nodes_Graph += [link1, (i,v,cost), (v,j,0)]
     return virtual_nodes_Graph
 
@@ -109,8 +109,7 @@ def get_virtual_nodes(edgelist):
     virtual_nodes = []
     for link1,link2 in d.values():
         i, j, cost = link2[0], link2[1], link2[2]
-        v = i + "_" + j
-        virtual_nodes.append(v)
+        virtual_nodes.append((i,j))
     return virtual_nodes
 
 def get_original_nodes(edgelist):
@@ -141,12 +140,11 @@ def get_predecessor_nodes(edgelist, node):
     """
     virtual_nodes = get_virtual_nodes(edgelist)
     predecessor_nodes = []
-    for v in virtual_nodes:
-        i, j = v.split("_")
+    for i,j in virtual_nodes:
         if node == i:
             predecessor_nodes.append(j)
         elif node == j:
-            predecessor_nodes.append(v)
+            predecessor_nodes.append((i,j))
     return predecessor_nodes
 
 def internal_links(edgelist, node):
@@ -202,20 +200,23 @@ def directed_paths(edgelist, start_node, target_node):
         if rule2 is None: continue
         for subgraph in rule2:
             elms.append(subgraph)
+
     elms = GraphSet(elms)
     di_paths = GraphSet.paths(start_node, target_node).excluding(elms)
     return di_paths
 
 if __name__ == "__main__":
     # 動作確認
-    edgelist = [(u"1",u"2",1),(u"1",u"3",2),(u"2",u"3",3),(u"2",u"4",4),(u"3",u"4",5),
-                (u"2",u"1",-1),(u"3",u"1",-2),(u"3",u"2",-3),(u"4",u"2",-4),(u"4",u"3",-5)]
+    # edgelist = [(u"1",u"2",1),(u"1",u"3",2),(u"2",u"3",3),(u"2",u"4",4),(u"3",u"4",5),
+    #             (u"2",u"1",-1),(u"3",u"1",-2),(u"3",u"2",-3),(u"4",u"2",-4),(u"4",u"3",-5)]
+    edgelist = [(1,2,1),(1,3,2),(2,3,3),(2,4,4),(3,4,5),
+                (2,1,-1),(3,1,-2),(3,2,-3),(4,2,-4),(4,3,-5)]
 
     GraphSet.set_universe(append_virtual_nodes(edgelist))
-    # print append_virtual_nodes(edgelist)
-    # print "virtual_nodes", get_virtual_nodes(edgelist)
-    # print "predecessor_nodes", get_predecessor_nodes(edgelist, u"4")
-    # print "internal_links", internal_links(edgelist, u"4")
-    # print "two_internal_links_subgraph", two_internal_links_subgraph(edgelist, u"4")
-    for path in directed_paths(edgelist, u"2", u"3"):
+    print append_virtual_nodes(edgelist)
+    print "virtual_nodes", get_virtual_nodes(edgelist)
+    print "predecessor_nodes", get_predecessor_nodes(edgelist, 1)
+    print "internal_links", internal_links(edgelist, 1)
+    print "two_internal_links_subgraph", two_internal_links_subgraph(edgelist, 1)
+    for path in directed_paths(edgelist, 2, 3):
         print path
