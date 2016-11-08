@@ -11,6 +11,7 @@ graphillion.Graphset.pathsメソッドが求めたパスからグラフの方向
 # 動作概要
 branch two_virtual_nodes_NetworkXと動作は同じだが
 NetworkXを一切使用しない実装
+仮想ノードを2個追加する
 不要なサブグラフのグラフセットの作成をまとめて行うことで高速化
 
 # 使い方
@@ -109,8 +110,8 @@ def internal_links(edgelist, node):
       グラフを構成する重み付きの辺のタプルを要素とするリスト
 
     returns:
-    * internal_links(GraphSet)
-      rule1にあてはまるサブグラフからなるGraphSet
+    * internal_links(list)
+      rule1にあてはまるサブグラフからなるlist
     """
     nodes = get_internal_nodes(edgelist, node)
     il = [[(v,node)] for v in nodes]

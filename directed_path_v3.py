@@ -2,14 +2,51 @@
 
 """
 author Mio Kinno
-date 2016.11.1
+date 2016.11.7
 branch master
 file directed_path_v3.py
 
 graphillion.Graphset.pathsメソッドが求めたパスからグラフの方向性を考慮したパスを取り出す
 
+
 # 動作概要
-仮想ノードの追加を1つだけにする
+
+## 仮想ノード
+仮想ノードを追加し(i,j,cost1),(j,i,cost2)のような構成ノードは同じだが方向性が異なるリンクを
+Graphillionで扱えるようにする
+これまで2個追加していた仮想ノードをこのモジュールでは1個に減らした
+
+仮想ノードの追加は以下のように行う
+
+* リンク(i,j,cost1)に対して  
+   仮想ノードを設けずにリンク(i,j,cost1)をそのまま使用する  
+
+* リンク(j,i,cost2)に対して  
+  仮想ノードj_iを設ける  
+  リンク(j,j_i,cost2),(j_i,i,0)を追加する
+
+## 不要なサブグラフの除外
+仮想ノードを追加するだけでは方向性を考慮したパス列挙を行うことはできない
+方向性を考慮したとき不要となるグラフの要素を除外する
+除外のルールは以下の通り
+
+* rule1
+  スタートノードへの流入リンクをすべて除外
+
+* rule2
+  スタートノード、ターゲットノード以外のノードで流入リンクの次数が2以上のノードについて、
+  そのノードの流入リンク2本からなるサブグラフをすべて除外
+  あるノードの流入リンクの本数をnとすると除外するサブグラフはnC2個存在する
+
+# 使い方
+**ノードのラベルは必ずunicode文字列とすること**
+1. グラフの重み付きリンクのタプル(i,j,cost)を要素とするリストedgelistを用意する
+2. GraphSet.set_universe(append_virtual_nodes(edgelist))を実行してGraphillionに仮想ノードを追加したグラフを読み込ませる
+3. directed_paths(edgelist, start_node, target_node)を実行する
+
+# 予定
+* 仮想ノードを文字列からタプルに変更
+* rule1,2の関数をgeneratorに変更   
 """
 
 from itertools import combinations
@@ -20,6 +57,15 @@ from graphillion import GraphSet
 def same_nodes_link_dict(edgelist):
     """
     キーが(i,j)、値が[(i,j,cost1),(j,i,cost2)]の辞書を返す
+
+    arguments:
+    * edgelist(edge list)
+      グラフを構成する重み付きの辺のタプルを要素とするリスト
+
+    return:
+    * d(defaultdict)
+      key: (i,j)
+      value: [(i,j,cost1),(j,i,cost2)]
     """
     d = defaultdict(list)
     for i,j,cost in edgelist:
@@ -31,6 +77,14 @@ def same_nodes_link_dict(edgelist):
 
 def append_virtual_nodes(edgelist):
     """
+    仮想ノードを追加したグラフの辺のリストを返す
+
+    arguments:
+    * edgelist(edge list)
+    
+    returns:
+    * virtual_nodes_Graph(edge list)
+      仮想ノードを追加したグラフの重み付き辺のタプルを要素とするリスト
     """
     d = same_nodes_link_dict(edgelist)
     virtual_nodes_Graph = []
@@ -42,6 +96,14 @@ def append_virtual_nodes(edgelist):
 
 def get_virtual_nodes(edgelist):
     """
+    仮想ノードのリストを返す
+
+    arguments:
+    * edgelist(edge list)
+
+    returns:
+    * virtual_nodes(nodes list)
+      仮想ノードを格納したリスト
     """
     d = same_nodes_link_dict(edgelist)
     virtual_nodes = []
@@ -57,31 +119,46 @@ def get_original_nodes(edgelist):
 
     arguments:
     * edgelist(edge list)
-      グラフを構成する重み付きの辺のタプルを要素とするリスト
 
     returns:
     * nodes(node list)
-      仮想ノード追加前のグラフのノードのリスト
+      仮想ノード追加前のグラフのノードを格納したリスト
     """
     edges = [[i,j] for i,j,cost in edgelist]
     return set(reduce(lambda x,y: x + y, edges))
 
 def get_predecessor_nodes(edgelist, node):
     """
+    nodeへの流入リンク(predecessor, node)を構成するノードpredecessorを返す
+
+    arguments:
+    * edgelist(edge list)
+    * node(node label)
+
+    returns:
+    * predecessor_nodes(node list)
+      predecessorノードを格納したリスト
     """
     virtual_nodes = get_virtual_nodes(edgelist)
-    predecrssor_nodes = []
+    predecessor_nodes = []
     for v in virtual_nodes:
         i, j = v.split("_")
         if node == i:
-            predecrssor_nodes.append(j)
+            predecessor_nodes.append(j)
         elif node == j:
-            predecrssor_nodes.append(v)
-    return predecrssor_nodes
+            predecessor_nodes.append(v)
+    return predecessor_nodes
 
 def internal_links(edgelist, node):
     """
     rule1
+
+    arguments:
+    * edgelist(edge list)
+
+    returns:
+    * internal_links(list)
+      rule1にあてはまるサブグラフからなるlist
     """
     predecrssors = get_predecessor_nodes(edgelist, node)
     il = [[(p, node)] for p in predecrssors]
@@ -90,6 +167,13 @@ def internal_links(edgelist, node):
 def two_internal_links_subgraph(edgelist, node):
     """
     rule2
+
+    arguments:
+    * edgelist(edge list)
+
+    returns:
+    * subgraphs(list)
+      rule2にあてはまるサブグラフからなるlist
     """
     il = [link[0] for link in internal_links(edgelist, node)]
     if len(il) < 2:
@@ -99,6 +183,16 @@ def two_internal_links_subgraph(edgelist, node):
 
 def directed_paths(edgelist, start_node, target_node):
     """
+    有効性を考慮したパスだけを含むグラフセットを返す
+
+    arguments:
+    * edgelist(edge list)
+    * start_node(node label)
+    * target_node(node label)
+
+    returns:
+    * di_paths(GraphSet)
+      有効性を考慮したパスだけを含むグラフセット
     """
     rule1 = internal_links(edgelist, start_node)
     rule2_nodes = get_original_nodes(edgelist) - {start_node, target_node}
@@ -120,7 +214,7 @@ if __name__ == "__main__":
     GraphSet.set_universe(append_virtual_nodes(edgelist))
     # print append_virtual_nodes(edgelist)
     # print "virtual_nodes", get_virtual_nodes(edgelist)
-    # print "predecrssor_nodes", get_predecessor_nodes(edgelist, u"4")
+    # print "predecessor_nodes", get_predecessor_nodes(edgelist, u"4")
     # print "internal_links", internal_links(edgelist, u"4")
     # print "two_internal_links_subgraph", two_internal_links_subgraph(edgelist, u"4")
     for path in directed_paths(edgelist, u"2", u"3"):

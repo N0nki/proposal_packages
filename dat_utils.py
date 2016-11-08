@@ -196,4 +196,3 @@ if __name__ == "__main__":
     print "hop", cost239_EQ_200.hop
     print "traffic", cost239_EQ_200.traffic
     print "DK", cost239_EQ_200.DK
-
