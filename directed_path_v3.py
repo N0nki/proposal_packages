@@ -39,13 +39,11 @@ Graphillionで扱えるようにする
   あるノードの流入リンクの本数をnとすると除外するサブグラフはnC2個存在する
 
 # 使い方
-**ノードのラベルは必ずunicode文字列とすること**
 1. グラフの重み付きリンクのタプル(i,j,cost)を要素とするリストedgelistを用意する
 2. GraphSet.set_universe(append_virtual_nodes(edgelist))を実行してGraphillionに仮想ノードを追加したグラフを読み込ませる
 3. directed_paths(edgelist, start_node, target_node)を実行する
 
 # 予定
-* 仮想ノードを文字列からタプルに変更
 * rule1,2の関数をgeneratorに変更   
 """
 
@@ -83,16 +81,16 @@ def append_virtual_nodes(edgelist):
     * edgelist(edge list)
     
     returns:
-    * virtual_nodes_Graph(edge list)
+    * virtual_nodes_graph(edge list)
       仮想ノードを追加したグラフの重み付き辺のタプルを要素とするリスト
     """
     d = same_nodes_link_dict(edgelist)
-    virtual_nodes_Graph = []
+    virtual_nodes_graph = []
     for link1,link2 in d.values():
         i, j, cost = link2[0], link2[1], link2[2]
         v = (i,j)
-        virtual_nodes_Graph += [link1, (i,v,cost), (v,j,0)]
-    return virtual_nodes_Graph
+        virtual_nodes_graph += [link1, (i,v,cost), (v,j,0)]
+    return virtual_nodes_graph
 
 def get_virtual_nodes(edgelist):
     """
@@ -202,7 +200,9 @@ def directed_paths(edgelist, start_node, target_node):
             elms.append(subgraph)
 
     elms = GraphSet(elms)
-    di_paths = GraphSet.paths(start_node, target_node).excluding(elms)
+    # di_paths = GraphSet.paths(start_node, target_node).excluding(elms)
+    di_paths = GraphSet.paths(start_node, target_node)
+    di_paths = di_paths.excluding(elms)
     return di_paths
 
 if __name__ == "__main__":
@@ -213,10 +213,10 @@ if __name__ == "__main__":
                 (2,1,-1),(3,1,-2),(3,2,-3),(4,2,-4),(4,3,-5)]
 
     GraphSet.set_universe(append_virtual_nodes(edgelist))
-    print append_virtual_nodes(edgelist)
-    print "virtual_nodes", get_virtual_nodes(edgelist)
-    print "predecessor_nodes", get_predecessor_nodes(edgelist, 1)
-    print "internal_links", internal_links(edgelist, 1)
-    print "two_internal_links_subgraph", two_internal_links_subgraph(edgelist, 1)
+    # print append_virtual_nodes(edgelist)
+    # print "virtual_nodes", get_virtual_nodes(edgelist)
+    # print "predecessor_nodes", get_predecessor_nodes(edgelist, 1)
+    # print "internal_links", internal_links(edgelist, 1)
+    # print "two_internal_links_subgraph", two_internal_links_subgraph(edgelist, 1)
     for path in directed_paths(edgelist, 2, 3):
         print path
