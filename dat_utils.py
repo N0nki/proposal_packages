@@ -10,7 +10,7 @@ Pythonで使えるように加工する
 """
 
 """
-the following descriptions are model data format of BRITE, COST239, JPNM, and NSFNET
+the following statements are model data format of BRITE, COST239, JPNM and NSFNET
 
 * number of demand path
 param dk:= val;
