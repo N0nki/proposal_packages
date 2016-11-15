@@ -42,9 +42,6 @@ Graphillionで扱えるようにする
 1. グラフの重み付きリンクのタプル(i,j,cost)を要素とするリストedgelistを用意する
 2. GraphSet.set_universe(append_virtual_nodes(edgelist))を実行してGraphillionに仮想ノードを追加したグラフを読み込ませる
 3. directed_paths(edgelist, start_node, target_node)を実行する
-
-# 予定
-* rule1,2の関数をgeneratorに変更   
 """
 
 from itertools import combinations
@@ -60,7 +57,7 @@ def same_nodes_link_dict(edgelist):
     * edgelist(edge list)
       グラフを構成する重み付きの辺のタプルを要素とするリスト
 
-    return:
+    returns:
     * d(defaultdict)
       key: (i,j)
       value: [(i,j,cost1),(j,i,cost2)]
@@ -156,8 +153,8 @@ def internal_links(edgelist, node):
     * internal_links(list)
       rule1にあてはまるサブグラフからなるlist
     """
-    predecrssors = get_predecessor_nodes(edgelist, node)
-    il = [[(p, node)] for p in predecrssors]
+    predecessors = get_predecessor_nodes(edgelist, node)
+    il = [[(p, node)] for p in predecessors]
     return il
 
 def two_internal_links_subgraph(edgelist, node):
