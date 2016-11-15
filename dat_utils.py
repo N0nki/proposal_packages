@@ -107,12 +107,16 @@ class Dat:
         * param(string)
           key of attr_regexp
         * func(lambda)
+
+        yields:
+         * func(params)
+           funcを適応したparams
         """
         _, lines = re.split(self.attr_regexp[param], self.all_lines)
         lines = lines.strip()
         for line in lines.splitlines():
-            if re.match(r";", line): break
-            # if re.match(r"start|target", param):
+            # if re.match(r";", line): break
+            if line.startswith(";"): break
             line = line.strip()
             params = re.split(r"\s*", line)
             yield func(params)
