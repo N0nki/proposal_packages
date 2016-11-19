@@ -130,17 +130,52 @@ def get_predecessor_nodes(edgelist, node):
     * node(node label)
 
     returns:
-    * predecessor_nodes(node list)
+    * predecessors(node list)
       predecessorノードを格納したリスト
     """
     virtual_nodes = get_virtual_nodes(edgelist)
-    predecessor_nodes = []
+    predecessors = []
     for i,j in virtual_nodes:
         if node == i:
-            predecessor_nodes.append(j)
+            predecessors.append(j)
         elif node == j:
-            predecessor_nodes.append((i,j))
-    return predecessor_nodes
+            predecessors.append((i,j))
+    return predecessors
+
+def get_neighbor_nodes(edgelist, node):
+    """
+    nodeの流出リンク(node, neighbor)を構成するノードneighborを返す
+
+    arguments:
+    * edgelist(edge list)
+    * node(node label)
+
+    returns:
+    * neighbors(node list)
+      neighborノードを格納したリスト
+    """
+    neighbors = [list(l[0]) for l in external_links(edgelist, node)]
+    neighbors = set(reduce(lambda x,y: x + y, neighbors)) - {node}
+    return neighbors
+
+def external_links(edgelist, node):
+    """
+    nodeの流出リンクを返す
+
+    arguments:
+    * edgelist(edge list)
+    * node(node label)
+
+    returns:
+    * external_links(link)
+      nodeの流出リンク
+    """
+    in_links = internal_links(edgelist, node)
+    ex_links = [l for l in GraphSet({}).graph_size(1).including(node) - GraphSet(in_links)]
+    return ex_links
+
+def connected_links(edgelist, sub_start):
+    sub_start_neighbors = get_neighbor_nodes(edgelist, sub_start)
 
 def internal_links(edgelist, node):
     """
@@ -148,6 +183,7 @@ def internal_links(edgelist, node):
 
     arguments:
     * edgelist(edge list)
+    * node(node label)
 
     returns:
     * internal_links(list)
@@ -211,9 +247,11 @@ if __name__ == "__main__":
 
     GraphSet.set_universe(append_virtual_nodes(edgelist))
     # print append_virtual_nodes(edgelist)
-    # print "virtual_nodes", get_virtual_nodes(edgelist)
-    # print "predecessor_nodes", get_predecessor_nodes(edgelist, 1)
-    # print "internal_links", internal_links(edgelist, 1)
-    # print "two_internal_links_subgraph", two_internal_links_subgraph(edgelist, 1)
+    print "virtual_nodes", get_virtual_nodes(edgelist)
+    print "predecessor_nodes", get_predecessor_nodes(edgelist, 1)
+    print "neighbor_nodes", get_neighbor_nodes(edgelist, 1)
+    print "internal_links", internal_links(edgelist, 1)
+    print "external_links", external_links(edgelist, 1)
+    print "two_internal_links_subgraph", two_internal_links_subgraph(edgelist, 1)
     for path in directed_paths(edgelist, 2, 3):
         print path
