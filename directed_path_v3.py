@@ -177,7 +177,7 @@ def external_links(edgelist, node):
 def connected_links(edgelist, start_node, num_edges=2):
     """
     パス長がnum_edgesのパスを求める
-    TO DO 2016.11.20
+    TODO: 2016.11.20
     * 任意のパス長を指定できるようにする
     * GraphSet.graphsを使う方法を検討
       * 仮想ノードを通ることによるパス長の変化にどうやって対応するか
