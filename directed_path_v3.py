@@ -174,6 +174,29 @@ def external_links(edgelist, node):
     ex_links = [l for l in GraphSet({}).graph_size(1).including(node) - GraphSet(in_links)]
     return ex_links
 
+def connected_nodes(edgelist, start_node, num_edges=2):
+    start_neighbors = get_neighbor_nodes(edgelist, start_node)
+    done = {start_node}
+    node_combinations = []
+    for sn in start_neighbors:
+        other_neighbors = list(get_neighbor_nodes(edgelist, sn) - done)
+        for on in other_neighbors:
+            if isinstance(on, tuple):
+                if on[0] == start_node or on[1] == start_node:
+                    other_neighbors.remove(on)
+        node_combinations.append([[start_node, sn, n] for n in other_neighbors])
+        done |= {sn}
+
+    for c in node_combinations:
+        for nodes in c:
+            for node in nodes:
+                if isinstance(node, tuple):
+                    nodes.append(node[1])
+    node_combinations = reduce(lambda x,y: x + y, node_combinations)
+
+
+
+
 def connected_links(edgelist, start_node, num_edges=2):
     """
     パス長がnum_edgesのパスを求める
@@ -292,6 +315,6 @@ if __name__ == "__main__":
     print "internal_links", internal_links(edgelist, 1)
     print "external_links", external_links(edgelist, 1)
     print "two_internal_links_subgraph", two_internal_links_subgraph(edgelist, 1)
-    print "connected_links", connected_links(edgelist, 1)
+    print "connected_links", connected_links(edgelist, 2)
     for path in directed_paths(edgelist, 2, 3):
         print path
