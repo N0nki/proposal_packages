@@ -128,7 +128,8 @@ class Dat:
         * タプル(i,j,attr)を要素とするリスト
         """
         matched = [params for params in\
-                   self.read_params(param,lambda params: (int(params[0]),int(params[1]),
+                   self.read_params(param,lambda params: (int(params[0]),
+                                                          int(params[1]),
                                                           float(params[2])))]
         return matched
 

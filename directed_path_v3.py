@@ -130,17 +130,91 @@ def get_predecessor_nodes(edgelist, node):
     * node(node label)
 
     returns:
-    * predecessor_nodes(node list)
+    * predecessors(node list)
       predecessorノードを格納したリスト
     """
     virtual_nodes = get_virtual_nodes(edgelist)
-    predecessor_nodes = []
+    predecessors = []
     for i,j in virtual_nodes:
         if node == i:
-            predecessor_nodes.append(j)
+            predecessors.append(j)
         elif node == j:
-            predecessor_nodes.append((i,j))
-    return predecessor_nodes
+            predecessors.append((i,j))
+    return predecessors
+
+def get_neighbor_nodes(edgelist, node):
+    """
+    nodeの流出リンク(node, neighbor)を構成するノードneighborを返す
+
+    arguments:
+    * edgelist(edge list)
+    * node(node label)
+
+    returns:
+    * neighbors(node list)
+      neighborノードを格納したリスト
+    """
+    neighbors = [list(l[0]) for l in external_links(edgelist, node)]
+    neighbors = set(reduce(lambda x,y: x + y, neighbors)) - {node}
+    return neighbors
+
+def external_links(edgelist, node):
+    """
+    nodeの流出リンクを返す
+
+    arguments:
+    * edgelist(edge list)
+    * node(node label)
+
+    returns:
+    * external_links(link)
+      nodeの流出リンク
+    """
+    in_links = internal_links(edgelist, node)
+    ex_links = [l for l in GraphSet({}).graph_size(1).including(node) - GraphSet(in_links)]
+    return ex_links
+
+def connected_links(edgelist, start_node, num_edges=2):
+    """
+    パス長がnum_edgesのパスを求める
+    TODO: 2016.11.20
+    * 任意のパス長を指定できるようにする
+    * GraphSet.graphsを使う方法を検討
+      * 仮想ノードを通ることによるパス長の変化にどうやって対応するか
+
+    arguments:
+    * edgelist(edge list)
+    * start_node(node label)
+
+    returns:
+    * link_combinations(list)
+      グラフセット形式で表されたパス長がnum_edgesのパスを格納したリスト
+    """
+    start_neighbors = get_neighbor_nodes(edgelist, start_node)
+    done = {start_node}
+    node_combinations = []
+    for sn in start_neighbors:
+        other_neighbors = list(get_neighbor_nodes(edgelist, sn) - done)
+        for on in other_neighbors:
+            if isinstance(on, tuple):
+                if on[0] == start_node or on[1] == start_node:
+                    other_neighbors.remove(on)
+        node_combinations.append([[start_node, sn, n] for n in other_neighbors])
+        done |= {sn}
+
+    for c in node_combinations:
+        for nodes in c:
+            for node in nodes:
+                if isinstance(node, tuple):
+                    nodes.append(node[1])
+    node_combinations = reduce(lambda x,y: x + y, node_combinations)
+    link_combinations = []
+    for c in node_combinations:
+        temp = []
+        for i in range(len(c) - 1):
+            temp.append(tuple(c[i:i+2]))
+        link_combinations.append(temp)
+    return link_combinations
 
 def internal_links(edgelist, node):
     """
@@ -148,6 +222,7 @@ def internal_links(edgelist, node):
 
     arguments:
     * edgelist(edge list)
+    * node(node label)
 
     returns:
     * internal_links(list)
@@ -211,9 +286,12 @@ if __name__ == "__main__":
 
     GraphSet.set_universe(append_virtual_nodes(edgelist))
     # print append_virtual_nodes(edgelist)
-    # print "virtual_nodes", get_virtual_nodes(edgelist)
-    # print "predecessor_nodes", get_predecessor_nodes(edgelist, 1)
-    # print "internal_links", internal_links(edgelist, 1)
-    # print "two_internal_links_subgraph", two_internal_links_subgraph(edgelist, 1)
+    print "virtual_nodes", get_virtual_nodes(edgelist)
+    print "predecessor_nodes", get_predecessor_nodes(edgelist, 1)
+    print "neighbor_nodes", get_neighbor_nodes(edgelist, 1)
+    print "internal_links", internal_links(edgelist, 1)
+    print "external_links", external_links(edgelist, 1)
+    print "two_internal_links_subgraph", two_internal_links_subgraph(edgelist, 1)
+    print "connected_links", connected_links(edgelist, 2)
     for path in directed_paths(edgelist, 2, 3):
         print path
