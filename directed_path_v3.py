@@ -46,7 +46,7 @@ Graphillionで扱えるようにする
 
 from itertools import combinations
 from collections import defaultdict
-from math import log10
+import math
 
 from graphillion import GraphSet
 
@@ -279,7 +279,7 @@ def directed_paths(edgelist, start_node, target_node):
 
 def total_cost(cost_dict, path):
     """
-    パスの総コストを返す
+    重み付き辺の重みの和を返す
 
     arguments:
     * cost_dict(dictionary)
@@ -310,7 +310,7 @@ def convert_common_logarithm(probabilities):
     """
     conv_prob = {}
     for link,prob in probabilities.items():
-        conv_prob[link] = log10(prob)
+        conv_prob[link] = math.log10(prob)
     return conv_prob
 
 def calc_probability(probabilities, path):
