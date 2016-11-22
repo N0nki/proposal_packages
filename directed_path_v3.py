@@ -46,6 +46,7 @@ Graphillionで扱えるようにする
 
 from itertools import combinations
 from collections import defaultdict
+from math import log10
 
 from graphillion import GraphSet
 
