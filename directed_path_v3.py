@@ -278,27 +278,80 @@ def directed_paths(edgelist, start_node, target_node):
     return di_paths
 
 def total_cost(cost_dict, path):
+    """
+    パスの総コストを返す
+
+    arguments:
+    * cost_dict(dictionary)
+      key: (i,j)
+      value: cost
+    * path(list)
+      重み付き辺のタプル(i,j,cost)を要素とするリスト
+
+    returns:
+    * total_cost(int or float)
+      pathを構成するリンクの重みの総和
+    """
     return sum([cost_dict[e] for e in path])
 
 def convert_common_logarithm(probabilities):
+    """
+    リンク利用確率pに対して常用対数を取る
+
+    arguments:
+    * probabilities(dictionary)
+      key: (i,j)
+      value: probability
+    
+    returns:
+    * conv_prob(dictionary)
+      key: (i,j)
+      value: probabilityに対して常用対数を取った値
+    """
     conv_prob = {}
     for link,prob in probabilities.items():
         conv_prob[link] = log10(prob)
     return conv_prob
 
 def calc_probability(probabilities, path):
+    """
+    パスの利用確率を求める  
+    各リンクの故障は独立に起こるとする
+
+    利用確率の昇順・降順でパス列挙を行いたいのでmax_iter(),min_iter()との連携を考える
+    これらのメソッドはパスの重みの総和の大小を扱う。一方、リンク利用可能性は独立な事象なので
+    パスの利用確率は積で取る必要がある
+    この積の計算を和の計算に直す
+    例として、2つのリンク(i,j,0.9),(j,k,0.9)からなるパスの利用確率を求める
+    1. 各リンクの利用確率に対して常用対数をとる
+       log10(0.9) = -0.045757490560675115
+    2. それらの値の総和をとる。これをexponentとおく
+       log10(0.9) + log10(0.9) = -0.09151498112135023
+    3. 10 ** exponentが利用確率である
+       10 ** (log10(0.9) + log10(0.9)) = 0.81
+
+    arguments:
+    * probabilities(dictionary)
+      key: (i,j)
+      value: probabilityに対して常用対数を取った値
+    * path
+      重み付き辺のタプル(i,j,cost)を要素とするリスト
+
+    returns:
+    * probability(float)
+      pathの利用確率
+    """
     exponent = total_cost(probabilities, path)
     return 10 ** exponent
 
 if __name__ == "__main__":
     # 動作確認
-    # edgelist = [(u"1",u"2",1),(u"1",u"3",2),(u"2",u"3",3),(u"2",u"4",4),(u"3",u"4",5),
-    #             (u"2",u"1",-1),(u"3",u"1",-2),(u"3",u"2",-3),(u"4",u"2",-4),(u"4",u"3",-5)]
     edgelist = [(1,2,1),(1,3,2),(2,3,3),(2,4,4),(3,4,5),
                 (2,1,-1),(3,1,-2),(3,2,-3),(4,2,-4),(4,3,-5)]
+    prob = {(i,j): .99 for i,j,cost in append_virtual_nodes(edgelist)}
+    conv_prob = convert_common_logarithm(prob)
 
     GraphSet.set_universe(append_virtual_nodes(edgelist))
-    # print append_virtual_nodes(edgelist)
     print "virtual_nodes", get_virtual_nodes(edgelist)
     print "predecessor_nodes", get_predecessor_nodes(edgelist, 1)
     print "neighbor_nodes", get_neighbor_nodes(edgelist, 1)
@@ -306,5 +359,10 @@ if __name__ == "__main__":
     print "external_links", external_links(edgelist, 1)
     print "two_internal_links_subgraph", two_internal_links_subgraph(edgelist, 1)
     print "connected_links", connected_links(edgelist, 2)
-    for path in directed_paths(edgelist, 2, 3):
+    paths_2_3 = directed_paths(edgelist, 2, 3)
+    choiced = paths_2_3.choice()
+    print choiced
+    print conv_prob
+    print calc_probability(conv_prob, choiced)
+    for path in paths_2_3:
         print path
