@@ -272,10 +272,22 @@ def directed_paths(edgelist, start_node, target_node):
             elms.append(subgraph)
 
     elms = GraphSet(elms)
-    # di_paths = GraphSet.paths(start_node, target_node).excluding(elms)
     di_paths = GraphSet.paths(start_node, target_node)
     di_paths = di_paths.excluding(elms)
     return di_paths
+
+def total_cost(cost_dict, path):
+    return sum([cost_dict[e] for e in path])
+
+def convert_common_logarithm(probabilities):
+    conv_prob = {}
+    for link,prob in probabilities.items():
+        conv_prob[link] = log10(prob)
+    return conv_prob
+
+def calc_probability(probabilities, path):
+    exponent = total_cost(probabilities, path)
+    return 10 ** exponent
 
 if __name__ == "__main__":
     # 動作確認
