@@ -308,9 +308,7 @@ def convert_common_logarithm(probabilities):
       key: (i,j)
       value: probabilityに対して常用対数を取った値
     """
-    conv_prob = {}
-    for link,prob in probabilities.items():
-        conv_prob[link] = math.log10(prob)
+    conv_prob = {link: math.log10(prob) for link,prob in probabilities.items()}
     return conv_prob
 
 def calc_probability(probabilities, path):
@@ -362,7 +360,7 @@ if __name__ == "__main__":
     paths_2_3 = directed_paths(edgelist, 2, 3)
     choiced = paths_2_3.choice()
     print choiced
-    print conv_prob
+    print "prob dict converted common logarithn", conv_prob
     print calc_probability(conv_prob, choiced)
     for path in paths_2_3:
         print path
