@@ -217,6 +217,32 @@ def connected_links(edgelist, start_node, num_edges=2):
         link_combinations.append(temp)
     return link_combinations
 
+def original_path(path):
+    """
+    仮想ノードを追加したグラフから求めたパスを元のグラフのパスに変換する
+
+    arguments:
+    * path(list)
+      辺を表すタプル(i,j)を要素とするリスト
+
+    * o_path(list)
+      pathから仮想ノードを除去した元のグラフのパス
+    """
+    _path = path[:]
+    o_path = []
+    for i,j in _path:
+        if isinstance(i, tuple):
+            o_edge = (i[0], i[1])
+            o_path.append(o_edge)
+            _path.remove((i[0], i))
+        elif isinstance(j, tuple):
+            o_edge = (j[0], j[1])
+            o_path.append(o_edge)
+            _path.remove((j, j[1]))
+        else:
+            o_path.append((i,j))
+    return o_path
+
 def internal_links(edgelist, node):
     """
     rule1
@@ -359,7 +385,8 @@ if __name__ == "__main__":
     print "connected_links", connected_links(edgelist, 2)
     paths_2_3 = directed_paths(edgelist, 2, 3)
     choiced = paths_2_3.choice()
-    print choiced
+    print "choiced path", choiced
+    print "original choiced path", original_path(choiced)
     print "prob dict converted common logarithn", conv_prob
     print calc_probability(conv_prob, choiced)
     for path in paths_2_3:
