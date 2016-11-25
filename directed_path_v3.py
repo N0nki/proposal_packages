@@ -3,7 +3,7 @@
 """
 author Mio Kinno
 date 2016.11.7
-branch feature-probability
+branch master
 file directed_path_v3.py
 
 graphillion.Graphset.pathsメソッドが求めたパスからグラフの方向性を考慮したパスを取り出す
@@ -42,6 +42,9 @@ Graphillionで扱えるようにする
 1. グラフの重み付きリンクのタプル(i,j,cost)を要素とするリストedgelistを用意する
 2. GraphSet.set_universe(append_virtual_nodes(edgelist))を実行してGraphillionに仮想ノードを追加したグラフを読み込ませる
 3. directed_paths(edgelist, start_node, target_node)を実行する
+
+TODO: 2016.11.25
+rule1とrule2にあてはまるサブグラフを収集する動作を関数にする
 """
 
 from itertools import combinations
@@ -234,12 +237,10 @@ def original_path(path):
         if isinstance(i, tuple):
             o_edge = (i[0], i[1])
             o_path.append(o_edge)
-            # _path.remove((i,j))
             _path.remove((i[0], i))
         elif isinstance(j, tuple):
             o_edge = (j[0], j[1])
             o_path.append(o_edge)
-            # _path.remove((i,j))
             _path.remove((j, j[1]))
         else:
             o_path.append((i,j))
@@ -324,7 +325,7 @@ def total_cost(cost_dict, path):
 
 def convert_common_logarithm(probabilities):
     """
-    リンク利用確率pに対して常用対数を取る
+    リンク利用確率に対して常用対数を取る
 
     arguments:
     * probabilities(dictionary)
