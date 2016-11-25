@@ -109,7 +109,7 @@ def virtual_nodes_links(edgelist):
     for link1,link2 in d.values():
         i, j, cost = link2[0], link2[1], link2[2]
         v = (i,j)
-        links += [(i,v), (v,j)]
+        links += [[(i,v)], [(v,j)]]
     return links
 
 
@@ -198,48 +198,6 @@ def external_links(edgelist, node):
     ex_links = [l for l in GraphSet({}).graph_size(1).including(node) - GraphSet(in_links)]
     return ex_links
 
-def connected_links(edgelist, start_node, num_edges=2):
-    """
-    パス長がnum_edgesのパスを求める
-    TODO: 2016.11.20
-    * 任意のパス長を指定できるようにする
-    * GraphSet.graphsを使う方法を検討
-      * 仮想ノードを通ることによるパス長の変化にどうやって対応するか
-
-    arguments:
-    * edgelist(edge list)
-    * start_node(node label)
-
-    returns:
-    * link_combinations(list)
-      グラフセット形式で表されたパス長がnum_edgesのパスを格納したリスト
-    """
-    start_neighbors = get_neighbor_nodes(edgelist, start_node)
-    done = {start_node}
-    node_combinations = []
-    for sn in start_neighbors:
-        other_neighbors = list(get_neighbor_nodes(edgelist, sn) - done)
-        for on in other_neighbors:
-            if isinstance(on, tuple):
-                if on[0] == start_node or on[1] == start_node:
-                    other_neighbors.remove(on)
-        node_combinations.append([[start_node, sn, n] for n in other_neighbors])
-        done |= {sn}
-
-    for c in node_combinations:
-        for nodes in c:
-            for node in nodes:
-                if isinstance(node, tuple):
-                    nodes.append(node[1])
-    node_combinations = reduce(lambda x,y: x + y, node_combinations)
-    link_combinations = []
-    for c in node_combinations:
-        temp = []
-        for i in range(len(c) - 1):
-            temp.append(tuple(c[i:i+2]))
-        link_combinations.append(temp)
-    return link_combinations
-
 def original_path(path):
     """
     仮想ノードを追加したグラフから求めたパスを元のグラフのパスに変換する
@@ -299,6 +257,64 @@ def two_internal_links_subgraph(edgelist, node):
     subgraphs = [[link1, link2] for link1,link2 in combinations(il, 2)]
     return subgraphs
 
+def invalid_direction_elms(edgelist, start_node, target_node):
+    """
+    rule1とrule2をまとめたグラフセット形式のリストを返す
+
+    arguments:
+    * edgelist(edge list)
+    * start_node(node label)
+    * target_node(node label)
+
+    returns:
+    * elms(list)
+    rule1とrule2をまとめたグラフセット形式のリスト
+    """
+    rule1 = internal_links(edgelist, start_node)
+    rule2_nodes = get_original_nodes(edgelist) - {start_node, target_node}
+    elms = [link for link in rule1]
+    for node in rule2_nodes:
+        rule2 = two_internal_links_subgraph(edgelist, node)
+        if rule2 is None: continue
+        for subgraph in rule2:
+            elms.append(subgraph)
+    return elms
+
+def connected_links(edgelist, start_node, target_node, num_edges):
+    """
+    start_nodeをパスのスタートノードとし、かつtarget_nodeを含まない
+    長さがnum_edgesのパスを含むグラフセットを返す
+    """
+    all_nodes = get_original_nodes(edgelist) | set(get_virtual_nodes(edgelist))
+    virtual_nodes = get_virtual_nodes(edgelist)
+    degree_constraints = {}
+    for node in all_nodes:
+        if node in virtual_nodes:
+            degree_constraints[node] = [0, 2]
+        elif node == start_node:
+            degree_constraints[node] = 1
+        elif node == target_node:
+            degree_constraints[node] = 0
+        else:
+            degree_constraints[node] = [0, 1, 2]
+
+    elms = invalid_direction_elms(edgelist, start_node, target_node)
+    virtual_links = virtual_nodes_links(edgelist)
+    n_range = GraphSet.graphs(vertex_groups=[[start_node]],
+                              no_loop=True,
+                              num_edges=num_edges,
+                              degree_constraints=degree_constraints)
+    n_inc_range = GraphSet.graphs(vertex_groups=[[start_node]],
+                                  no_loop=True,
+                                  num_edges=num_edges+1,
+                                  degree_constraints=degree_constraints)
+    n_range = n_range.excluding(GraphSet(elms))\
+                     .excluding(GraphSet(virtual_links))
+    n_inc_range = n_inc_range.excluding(GraphSet(elms))\
+                             .including(GraphSet(virtual_links))
+    return n_range | n_inc_range
+
+
 def directed_paths(edgelist, start_node, target_node):
     """
     有効性を考慮したパスだけを含むグラフセットを返す
@@ -312,15 +328,7 @@ def directed_paths(edgelist, start_node, target_node):
     * di_paths(GraphSet)
       有効性を考慮したパスだけを含むグラフセット
     """
-    rule1 = internal_links(edgelist, start_node)
-    rule2_nodes = get_original_nodes(edgelist) - {start_node, target_node}
-    elms = [link for link in rule1]
-    for node in rule2_nodes:
-        rule2 = two_internal_links_subgraph(edgelist, node)
-        if rule2 is None: continue
-        for subgraph in rule2:
-            elms.append(subgraph)
-
+    elms = invalid_direction_elms(edgelist, start_node, target_node)
     elms = GraphSet(elms)
     di_paths = GraphSet.paths(start_node, target_node)
     di_paths = di_paths.excluding(elms)
@@ -406,12 +414,13 @@ if __name__ == "__main__":
     print "internal_links", internal_links(edgelist, 1)
     print "external_links", external_links(edgelist, 1)
     print "two_internal_links_subgraph", two_internal_links_subgraph(edgelist, 1)
-    print "connected_links", connected_links(edgelist, 2)
+    print "connected_links", connected_links(edgelist, 1, 2, 2)
     paths_2_3 = directed_paths(edgelist, 2, 3)
     choiced = paths_2_3.choice()
     print "choiced path", choiced
     print "original choiced path", original_path(choiced)
     print "prob dict converted common logarithn", conv_prob
     print calc_probability(conv_prob, choiced)
+    print "invalid_direction_elms", invalid_direction_elms(edgelist, 1, 4)
     for path in paths_2_3:
         print path
