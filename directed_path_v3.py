@@ -234,12 +234,12 @@ def original_path(path):
         if isinstance(i, tuple):
             o_edge = (i[0], i[1])
             o_path.append(o_edge)
-            _path.remove((i,j))
+            # _path.remove((i,j))
             _path.remove((i[0], i))
         elif isinstance(j, tuple):
             o_edge = (j[0], j[1])
             o_path.append(o_edge)
-            _path.remove((i,j))
+            # _path.remove((i,j))
             _path.remove((j, j[1]))
         else:
             o_path.append((i,j))
