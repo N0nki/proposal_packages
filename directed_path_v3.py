@@ -109,8 +109,8 @@ def virtual_nodes_links(edgelist):
     for link1,link2 in d.values():
         i, j, cost = link2[0], link2[1], link2[2]
         v = (i,j)
-        virtual_nodes_graph += [(i,v,cost), (v,j,0)]
-    return virtual_nodes_graph
+        links += [(i,v), (v,j)]
+    return links
 
 
 def get_virtual_nodes(edgelist):
@@ -400,6 +400,7 @@ if __name__ == "__main__":
 
     GraphSet.set_universe(append_virtual_nodes(edgelist))
     print "virtual_nodes", get_virtual_nodes(edgelist)
+    print "virtual_nodes_links", virtual_nodes_links(edgelist)
     print "predecessor_nodes", get_predecessor_nodes(edgelist, 1)
     print "neighbor_nodes", get_neighbor_nodes(edgelist, 1)
     print "internal_links", internal_links(edgelist, 1)
