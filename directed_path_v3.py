@@ -93,6 +93,26 @@ def append_virtual_nodes(edgelist):
         virtual_nodes_graph += [link1, (i,v,cost), (v,j,0)]
     return virtual_nodes_graph
 
+def virtual_nodes_links(edgelist):
+    """
+    仮想ノードを含むリンクを返す
+
+    arguments:
+    * edgelist(edge list)
+    
+    returns:
+    * links(edge list)
+      仮想ノードを含むリンクを格納したリスト
+    """
+    d = same_nodes_link_dict(edgelist)
+    links = []
+    for link1,link2 in d.values():
+        i, j, cost = link2[0], link2[1], link2[2]
+        v = (i,j)
+        virtual_nodes_graph += [(i,v,cost), (v,j,0)]
+    return virtual_nodes_graph
+
+
 def get_virtual_nodes(edgelist):
     """
     仮想ノードのリストを返す
