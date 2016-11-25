@@ -3,7 +3,7 @@
 """
 author Mio Kinno
 date 2016.11.7
-branch master
+branch feature-probability
 file directed_path_v3.py
 
 graphillion.Graphset.pathsメソッドが求めたパスからグラフの方向性を考慮したパスを取り出す
