@@ -280,6 +280,24 @@ def invalid_direction_elms(edgelist, start_node, target_node):
             elms.append(subgraph)
     return elms
 
+def directed_paths(edgelist, start_node, target_node):
+    """
+    有効性を考慮したパスだけを含むグラフセットを返す
+
+    arguments:
+    * edgelist(edge list)
+    * start_node(node label)
+    * target_node(node label)
+
+    returns:
+    * di_paths(GraphSet)
+    """
+    elms = invalid_direction_elms(edgelist, start_node, target_node)
+    elms = GraphSet(elms)
+    di_paths = GraphSet.paths(start_node, target_node)
+    di_paths = di_paths.excluding(elms)
+    return di_paths
+
 def connected_links(edgelist, start_node, target_node, num_edges):
     """
     start_nodeをパスのスタートノードとし、かつtarget_nodeを含まない
@@ -324,24 +342,6 @@ def connected_links(edgelist, start_node, target_node, num_edges):
     n_inc_range = n_inc_range.excluding(GraphSet(elms))\
                              .including(GraphSet(virtual_links))
     return n_range | n_inc_range
-
-def directed_paths(edgelist, start_node, target_node):
-    """
-    有効性を考慮したパスだけを含むグラフセットを返す
-
-    arguments:
-    * edgelist(edge list)
-    * start_node(node label)
-    * target_node(node label)
-
-    returns:
-    * di_paths(GraphSet)
-    """
-    elms = invalid_direction_elms(edgelist, start_node, target_node)
-    elms = GraphSet(elms)
-    di_paths = GraphSet.paths(start_node, target_node)
-    di_paths = di_paths.excluding(elms)
-    return di_paths
 
 def total_cost(cost_dict, path):
     """
