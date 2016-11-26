@@ -284,6 +284,17 @@ def connected_links(edgelist, start_node, target_node, num_edges):
     """
     start_nodeをパスのスタートノードとし、かつtarget_nodeを含まない
     長さがnum_edgesのパスを含むグラフセットを返す
+
+    arguments:
+    * edgelist(edge list)
+    * start_node(node label)
+    * target_node(node label)
+    * num_edges(int)
+      パスの長さ
+
+    returns:
+    * di_path(GraphSet)
+      有効性を考慮した
     """
     all_nodes = get_original_nodes(edgelist) | set(get_virtual_nodes(edgelist))
     virtual_nodes = get_virtual_nodes(edgelist)
@@ -325,7 +336,6 @@ def directed_paths(edgelist, start_node, target_node):
 
     returns:
     * di_paths(GraphSet)
-      有効性を考慮したパスだけを含むグラフセット
     """
     elms = invalid_direction_elms(edgelist, start_node, target_node)
     elms = GraphSet(elms)
