@@ -314,7 +314,6 @@ def connected_links(edgelist, start_node, target_node, num_edges):
                              .including(GraphSet(virtual_links))
     return n_range | n_inc_range
 
-
 def directed_paths(edgelist, start_node, target_node):
     """
     有効性を考慮したパスだけを含むグラフセットを返す
