@@ -18,11 +18,11 @@ Graphillionで扱えるようにする
 
 仮想ノードの追加は以下のように行う
 
-* リンク(i,j,cost1)に対して  
+* リンク(i,j,cost1)に対して
    仮想ノードを設けずにリンク(i,j,cost1)をそのまま使用する  
 
 * リンク(j,i,cost2)に対して  
-  仮想ノードj_iを設ける  
+  仮想ノードj_iを設ける
   リンク(j,j_i,cost2),(j_i,i,0)を追加する
 
 ## 不要なサブグラフの除外
@@ -99,7 +99,7 @@ def virtual_nodes_links(edgelist):
 
     arguments:
     * edgelist(edge list)
-    
+
     returns:
     * links(edge list)
       仮想ノードを含むリンクを格納したリスト
