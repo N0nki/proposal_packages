@@ -2,7 +2,7 @@
 
 """
 author Mio Kinno
-date 2016.11.7
+date 2016.11.25
 branch master
 file directed_graphillion.py
 
@@ -42,12 +42,10 @@ Graphillionで扱えるようにする
   あるノードの流入リンクの本数をnとすると除外するサブグラフはnC2個存在する
 
 # 使い方
-1. グラフの重み付きリンクのタプル(i,j,cost)を要素とするリストedgelistを用意する。edgelistはモジュール内でグローバル変数として扱われているため、必ずこの名前にすること
-2. GraphSet.set_universe(append_virtual_nodes(edgelist))を実行してGraphillionに仮想ノードを追加したグラフを読み込ませる
-3. directed_paths(edgelist, start_node, target_node)を実行する
-
-TODO: 2016.11.25
-rule1とrule2にあてはまるサブグラフを収集する動作を関数にする
+1. グラフの重み付きリンクのタプル(i,j,cost)を要素とするリストedgelistを用意する。
+   edgelistはモジュール内でグローバル変数として扱われているため、必ずこの名前にすること
+2. GraphSet.set_universe(append_virtual_nodes())を実行してGraphillionに仮想ノードを追加したグラフを読み込ませる
+3. directed_paths(start_node, target_node)を実行する
 """
 
 from itertools import combinations
@@ -273,6 +271,7 @@ def directed_paths(start_node, target_node):
 
     returns:
     * di_paths(GraphSet)
+      有効性を考慮したパスだけを含むグラフセット
     """
     elms = invalid_direction_elms(start_node, target_node)
     elms = GraphSet(elms)
@@ -293,7 +292,7 @@ def connected_edges(start_node, target_node, num_edges):
 
     returns:
     * di_path(GraphSet)
-      有効性を考慮した
+      有効性を考慮したパスだけを含むグラフセット
     """
     all_nodes = original_nodes() | set(virtual_nodes())
     v_nodes = virtual_nodes()
