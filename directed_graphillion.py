@@ -327,6 +327,20 @@ def connected_edges(start_node, target_node, num_edges):
                              .including(GraphSet(v_edges))
     return n_range | n_inc_range
 
+def disjoint_paths(paths, path):
+    """
+    パスのグラフセットから指定したパスのdisjoint pathを求める
+
+    arguments:
+    * paths(GraphSet)
+    * path(list)
+
+    returns:
+    * 
+    """
+    disjoint_elms = [[e] for e in path]
+    return paths.excluding(disjoint_elms)
+
 def total_cost(cost_dict, path):
     """
     重み付き辺の重みの和を返す
