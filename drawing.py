@@ -22,7 +22,17 @@ from dat_utils import Dat
 
 def get_node_pos(model):
     """
+    モデルデータの各ノードの座標を求める
 
+    arguments:
+    * model(string)
+      モデルデータの名前。以下のいずれかを指定する
+      cost239,jpn48,nsfnet,akita
+
+    returns:
+    * pos(dictionary)
+      key: node label
+      value: node position
     """
     path = "../model_data_coordinates/"
     data = {"cost239": path + "cost239_coordinates_fixed.csv",
@@ -36,7 +46,13 @@ def get_node_pos(model):
 
 def model_data_graph(model):
     """
+    モデルデータのグラフを作成する
+    
+    arguments:
+    * model(string)
 
+    returns:
+    * G(networkx Graph object)
     """
     path = "../model_data/"
     data = {"cost239": path + "COST239/cost239_EQ_200.dat",
@@ -50,7 +66,15 @@ def model_data_graph(model):
 
 def draw_model_data(model, figsize=None, path=None):
     """
+    モデルデータを描画する
+    pathを指定するとpathに含まれるノードと辺が赤く描画される
 
+    arguments:
+    * model(string)
+    * figsize(tuple optional)
+      描画する図の大きさ
+    * path(list)
+      辺を表すタプルを要素とするリスト
     """
     pos = get_node_pos(model)
     G = model_data_graph(model)
