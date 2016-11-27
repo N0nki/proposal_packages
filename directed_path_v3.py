@@ -356,7 +356,7 @@ def disjoint_paths(paths, path):
     * 
     """
     disjoint_elms = [[e] for e in path]
-    return paths.excluding(disjoint_elms)
+    return paths.excluding(GraphSet(disjoint_elms))
 
 def total_cost(cost_dict, path):
     """
