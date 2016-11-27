@@ -54,6 +54,10 @@ import math
 
 from graphillion import GraphSet
 
+def read_edgelist(data):
+    global edgelist
+    edgelist = data
+
 def edges_table():
     """
     キーが(i,j)、値が[(i,j,cost1),(j,i,cost2)]の辞書を返す
