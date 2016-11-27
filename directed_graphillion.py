@@ -43,7 +43,6 @@ Graphillionで扱えるようにする
 
 # 使い方
 1. グラフの重み付きリンクのタプル(i,j,cost)を要素とするリストedgelistを用意する。
-   edgelistはモジュール内でグローバル変数として扱われているため、必ずこの名前にすること
 2. GraphSet.set_universe(append_virtual_nodes())を実行してGraphillionに仮想ノードを追加したグラフを読み込ませる
 3. directed_paths(start_node, target_node)を実行する
 """
