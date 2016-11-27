@@ -4,11 +4,11 @@
 author Mio Kinno
 date 2016.11.11
 branch master
-file draw_model_data.py
+file drawing.py
 
 モデルデータcost239,jpn,nsfnet,akitaを描画する
 figsizeは以下の値を指定すると見やすい
-cost239 (9, 3)
+cost239 (9, 6)
 jpn48 (18, 15)
 nsfnet (15, 9)
 akita (15, 18)or(12, 15)
