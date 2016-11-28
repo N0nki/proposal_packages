@@ -54,6 +54,13 @@ import math
 from graphillion import GraphSet
 
 def read_edgelist(data):
+    """
+    グローバル変数edgelistを設定する
+
+    arguments:
+    * data(list)
+      グラフを構成する重み付きの辺のタプルを要素とするリスト
+    """
     global edgelist
     edgelist = data
 
