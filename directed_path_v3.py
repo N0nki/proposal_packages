@@ -42,9 +42,6 @@ Graphillionで扱えるようにする
 1. グラフの重み付きリンクのタプル(i,j,cost)を要素とするリストedgelistを用意する
 2. GraphSet.set_universe(append_virtual_nodes(edgelist))を実行してGraphillionに仮想ノードを追加したグラフを読み込ませる
 3. directed_paths(edgelist, start_node, target_node)を実行する
-
-TODO: 2016.11.25
-rule1とrule2にあてはまるサブグラフを収集する動作を関数にする
 """
 
 from itertools import combinations
