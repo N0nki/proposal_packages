@@ -344,8 +344,32 @@ def disjoint_paths(paths, path):
     returns:
     * 
     """
-    disjoint_elms = [[e] for e in path]
+    disjoint_elms = []
+    for e in path:
+        if isinstance(e[0], tuple):
+            disjoint_elms += [[e[0]], [e]]
+        elif isinstance(e[1], tuple):
+            disjoint_elms.append([e])
+        else:
+            disjoint_elms.append([e])
+            i, j = e[0], e[1]
+            v = (i,j)
+            disjoint_elms += [[(i,v)], [(v,j)]]
     return paths.excluding(GraphSet(disjoint_elms))
+
+# def disjoint_paths(paths, path):
+#     """
+#     パスのグラフセットから指定したパスのlink-disjoint pathを求める
+#
+#     arguments:
+#     * paths(GraphSet)
+#     * path(list)
+#
+#     returns:
+#     * 
+#     """
+#     disjoint_elms = [[e] for e in path]
+#     return paths.excluding(GraphSet(disjoint_elms))
 
 def total_cost(cost_dict, path):
     """
@@ -434,7 +458,9 @@ if __name__ == "__main__":
     print "invalid_direction_elms", invalid_direction_elms(1, 4)
     print "directed_paths", directed_paths(1, 4)
     print "connected_edges", connected_edges(1, 4, 2)
+    di_paths_1_4 = directed_paths(1, 4)
     choiced = directed_paths(1, 4).choice()
+    print "disjoint_paths", disjoint_paths(di_paths_1_4, [(2, (2, 1)), ((2, 1), 1), (3, 1), (3, 2)])
     print "choiced", choiced
     print "original_path", original_path(choiced)
     for p in directed_paths(1, 4):
