@@ -335,7 +335,7 @@ def connected_edges(start_node, target_node, num_edges):
 
 def disjoint_paths(paths, path):
     """
-    パスのグラフセットから指定したパスのdisjoint pathを求める
+    パスのグラフセットから指定したパスのlink-disjoint pathを求める
 
     arguments:
     * paths(GraphSet)
@@ -372,7 +372,7 @@ def convert_common_logarithm(probabilities):
     * probabilities(dictionary)
       key: (i,j)
       value: probability
-    
+
     returns:
     * conv_prob(dictionary)
       key: (i,j)
