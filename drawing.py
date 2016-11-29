@@ -10,8 +10,8 @@ file drawing.py
 figsizeは以下の値を指定すると見やすい
 cost239 (9, 6)
 jpn48 (18, 15)
-nsfnet (15, 9)
-akita (15, 18)or(12, 15)
+nsfnet (15, 9)or(6, 9)
+akita (15, 18)or(12, 15)or(6, 9)
 """
 
 import networkx as nx
@@ -67,14 +67,14 @@ def model_data_graph(model):
 def draw_model_data(model, figsize=None, path=None):
     """
     モデルデータを描画する
-    pathを指定するとpathに含まれるノードと辺が赤く描画される
 
     arguments:
     * model(string)
     * figsize(tuple optional)
       描画する図の大きさ
-    * path(list)
+    * path(list optional)
       辺を表すタプルを要素とするリスト
+    pathを指定するとpathに含まれるノードと辺が赤く描画される
     """
     pos = get_node_pos(model)
     G = model_data_graph(model)
