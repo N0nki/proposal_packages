@@ -345,6 +345,7 @@ def disjoint_paths(paths, path):
     * 
     """
     disjoint_elms = []
+    v_nodes = virtual_nodes()
     for e in path:
         if isinstance(e[0], tuple):
             disjoint_elms += [[e[0]], [e]]
@@ -354,8 +355,13 @@ def disjoint_paths(paths, path):
             disjoint_elms.append([e])
             i, j = e[0], e[1]
             v = (i,j)
-            disjoint_elms += [[(i,v)], [(v,j)]]
+            if v in v_nodes:
+                disjoint_elms += [[(i,v)], [(v,j)]]
+            else:
+                v = (j,i)
+                disjoint_elms += [[(i,v)], [(v,j)]]
     return paths.excluding(GraphSet(disjoint_elms))
+    # return disjoint_elms
 
 # def disjoint_paths(paths, path):
 #     """
