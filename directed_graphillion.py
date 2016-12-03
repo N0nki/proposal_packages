@@ -115,7 +115,6 @@ def virtual_node_edges():
         edges += [[(i,v)], [(v,j)]]
     return edges
 
-
 def virtual_nodes():
     """
     仮想ノードのリストを返す
@@ -343,7 +342,7 @@ def disjoint_paths(paths, path):
     * path(list)
 
     returns:
-    * 
+    * di_paths(GraphSet)
     """
     disjoint_elms = []
     v_nodes = virtual_nodes()
@@ -362,7 +361,6 @@ def disjoint_paths(paths, path):
                 v = (j,i)
                 disjoint_elms += [[(i,v)], [(v,j)]]
     return paths.excluding(GraphSet(disjoint_elms))
-    # return disjoint_elms
 
 # def disjoint_paths(paths, path):
 #     """
