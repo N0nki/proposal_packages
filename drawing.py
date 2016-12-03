@@ -47,7 +47,7 @@ def get_node_pos(model):
 def model_data_graph(model):
     """
     モデルデータのグラフを作成する
-    
+
     arguments:
     * model(string)
 
@@ -64,7 +64,7 @@ def model_data_graph(model):
     G = nx.Graph(data=edges)
     return G
 
-def draw_model_data(model, figsize=None, path=None):
+def draw_model_data(model, path=None, figsize=None):
     """
     モデルデータを描画する
 

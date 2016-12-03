@@ -58,8 +58,8 @@ class Dat:
     * traffic
     * DK
 
-    @propertyデコレータによってall_linesとfilename以外のゲッターの動作を変更している。
-    メソッド__get_attr1,2,3,4を経由してモデルファイルのパラメータにアクセスする。
+    @propertyデコレータによってall_linesとfilename以外のゲッターの動作を変更している
+    メソッド__get_attr1,2,3,4を経由してモデルファイルのパラメータを取り出す
     """
 
     # key: model data parameter name
@@ -115,7 +115,6 @@ class Dat:
         _, lines = re.split(self.attr_regexp[param], self.all_lines)
         lines = lines.strip()
         for line in lines.splitlines():
-            # if re.match(r";", line): break
             if line.startswith(";"): break
             line = line.strip()
             params = re.split(r"\s*", line)
