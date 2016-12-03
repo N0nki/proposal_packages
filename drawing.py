@@ -70,11 +70,12 @@ def draw_model_data(model, path=None, figsize=None):
 
     arguments:
     * model(string)
-    * figsize(tuple optional)
-      描画する図の大きさ
     * path(list optional)
       辺を表すタプルを要素とするリスト
-    pathを指定するとpathに含まれるノードと辺が赤く描画される
+      pathを指定するとpathに含まれるノードと辺が赤く描画される
+    * figsize(tuple optional)
+      描画する図の大きさ
+      (width, height)の形式
     """
     pos = get_node_pos(model)
     G = model_data_graph(model)
