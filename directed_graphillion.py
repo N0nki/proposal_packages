@@ -51,6 +51,7 @@ Graphillionで扱えるようにする
 from itertools import combinations
 from collections import defaultdict
 import math
+import random
 
 from graphillion import GraphSet
 
@@ -393,6 +394,38 @@ def total_cost(cost_dict, path):
     """
     return sum([cost_dict[e] for e in path])
 
+def probability_dict(pmin=None, pmax=None):
+    """
+    グラフの各辺にリンク利用確率を設定する
+
+    arguments:
+    * pmin(float)
+      利用確率の下限
+    * pmax(float)
+      利用確率の上限
+
+    returns:
+    * prob(dict)
+      key: (i,j)
+      value: probability
+    """
+    if pmin is None:
+        pmin = .9
+    if pmax is None:
+        pmax = .99
+
+    prob = {}
+    d = edges_table()
+    for e1,e2 in d.values():
+        i, j = e2[0], e2[1]
+        v = (i, j)
+        r = random.uniform(pmin, pmax)
+        prob[(e1[0], e1[1])] = r
+        prob[(i, v)] = r
+        prob[(v, j)] = 1
+
+    return prob
+
 def convert_common_logarithm(probabilities):
     """
     リンク利用確率に対して常用対数を取る
@@ -468,6 +501,7 @@ if __name__ == "__main__":
     print "disjoint_paths", disjoint_paths(di_paths_1_4, [(2, (2, 1)), ((2, 1), 1), (3, 1), (3, 2)])
     print "choiced", choiced
     print "original_path", original_path(choiced)
-    for p in directed_paths(1, 4):
-        print p
-        print calc_probability(prob, p)
+    print "probability_dict", probability_dict()
+    # for p in directed_paths(1, 4):
+    #     print p
+    #     print calc_probability(prob, p)
