@@ -483,8 +483,8 @@ if __name__ == "__main__":
 
     GraphSet.set_universe(append_virtual_nodes())
 
-    # print edges_table()
-    # print append_virtual_nodes()
+    print "edges_table", edges_table()
+    print "append_virtual_nodes", append_virtual_nodes()
     print "virtual_node_edges", virtual_node_edges()
     print "virtual_nodes", virtual_nodes()
     print "original_nodes", original_nodes()
