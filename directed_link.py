@@ -4,7 +4,7 @@
 author Mio Kinno
 date 2016.11.25
 branch master
-file directed_graphillion.py
+file directed_link.py
 
 graphillion.Graphset.pathsメソッドが求めたパスからグラフの方向性を考慮したパスを取り出す
 v3のリファクタリング
