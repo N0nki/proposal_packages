@@ -59,7 +59,7 @@ def two_internal_edges_subgraph(DiGraph, node):
     subgraphs = [[link1, link2] for link1,link2 in combinations(internal_links, 2)]
     return subgraphs
 
-def collect_invalid_direction_elms(DiGraph, start_node):
+def invalid_direction_elms(DiGraph, start_node):
     """
     rule1とrule2の結果をまとめる
 
@@ -82,8 +82,10 @@ def collect_invalid_direction_elms(DiGraph, start_node):
             elms.append(subgraph)
     if len(rule1) == 0:
         return elms
-    for e in rule1:
-        return elms.append(e)
+    else:
+        for e in rule1:
+            elms.append(e)
+        return elms
 
 def directed_paths(DiGraph, start_node, target_node):
     """
@@ -99,7 +101,7 @@ def directed_paths(DiGraph, start_node, target_node):
       有効性を考慮したパスだけを含むグラフセット
     """
     di_paths = GraphSet.paths(start_node, target_node)
-    elms = collect_invalid_direction_elms(DiGraph, start_node)
+    elms = invalid_direction_elms(DiGraph, start_node)
     di_paths = di_paths.excluding(GraphSet(elms))
     return di_paths
 
@@ -110,7 +112,7 @@ if __name__ == "__main__":
     GraphSet.set_universe(G.edges())
     print internal_edges(G, "b")
     print two_internal_edges_subgraph(G, "c")
-    print collect_invalid_direction_elms(G, "b")
+    print invalid_direction_elms(G, "b")
     print directed_paths(G, "b", "c")
     print "the following results are directed_paths of start node to target node"
     for path in directed_paths(G, "b", "c"):
