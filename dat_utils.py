@@ -75,7 +75,6 @@ class Dat:
                    "DK":       r"param : DK\s*:\s*d\s*:="}
 
     def __init__(self, datfile):
-        # self.all_lines  = codecs.open(datfile, "r", "shift_jis").read()
         f = codecs.open(datfile, "r", "shift_jis")
         try:
             self.all_lines = f.read()
@@ -194,14 +193,14 @@ class Dat:
 if __name__ == "__main__":
     # 動作確認
     cost239_EQ_200 = Dat("../model_data/COST239/cost239_EQ_200.dat")
-    for e in cost239_EQ_200.read_params("target", lambda params: params):
-        print e
-    # print "file name", cost239_EQ_200.filename
-    # print "dk", cost239_EQ_200.dk
-    # print "m", cost239_EQ_200.m
-    # print "n", cost239_EQ_200.n
-    # print "capacity", cost239_EQ_200.capacity
-    # print "cost", cost239_EQ_200.cost
-    # print "hop", cost239_EQ_200.hop
-    # print "traffic", cost239_EQ_200.traffic
-    # print "DK", cost239_EQ_200.DK
+    # for e in cost239_EQ_200.read_params("target", lambda params: params):
+    #     print e
+    print "file name", cost239_EQ_200.filename
+    print "dk", cost239_EQ_200.dk
+    print "m", cost239_EQ_200.m
+    print "n", cost239_EQ_200.n
+    print "capacity", cost239_EQ_200.capacity
+    print "cost", cost239_EQ_200.cost
+    print "hop", cost239_EQ_200.hop
+    print "traffic", cost239_EQ_200.traffic
+    print "DK", cost239_EQ_200.DK
