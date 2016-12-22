@@ -46,6 +46,10 @@ v3のリファクタリング
 2. read_edgelist(edgelist)を実行してモジュールにedgelistを読み込ませる
 3. GraphSet.set_universe(append_virtual_nodes())を実行してGraphillionに仮想ノードを追加したグラフを読み込ませる
 4. directed_paths(start_node, target_node)を実行する
+
+TODO: 2016.12.22
+two_internal_edges_subgraphの戻り値にNoneを使わないようにする。
+代わりに例外を発生させ呼び出し先で例外処理をする。
 """
 
 from itertools import combinations
