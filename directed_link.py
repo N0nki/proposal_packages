@@ -248,11 +248,15 @@ def two_internal_edges_subgraph(node):
     * subgraphs(list)
       rule2にあてはまるサブグラフからなるlist
     """
-    in_edges = [e[0] for e in internal_edges(node)]
-    if len(in_edges) < 2:
-        return
-    subgraphs = [[e1, e2] for e1,e2 in combinations(in_edges, 2)]
-    return subgraphs
+    try:
+        in_edges = [e[0] for e in internal_edges(node)]
+        if len(in_edges) < 2:
+            raise ValueError("Error Message")
+    except ValueError:
+        print "node {} has no two and over internal edges".format(node)
+    else:
+        subgraphs = [[e1, e2] for e1,e2 in combinations(in_edges, 2)]
+        return subgraphs
 
 def invalid_direction_elms(start_node, target_node):
     """
@@ -270,11 +274,15 @@ def invalid_direction_elms(start_node, target_node):
     rule2_nodes = original_nodes() - {start_node, target_node}
     elms = [e for e in rule1]
     for node in rule2_nodes:
-        rule2 = two_internal_edges_subgraph(node)
-        if rule2 is None: continue
-        for subgraph in rule2:
-            elms.append(subgraph)
+        try:
+            rule2 = two_internal_edges_subgraph(node)
+        except ValueError:
+            continue
+        else:
+            for subgraph in rule2:
+                elms.append(subgraph)
     return elms
+
 
 def directed_paths(start_node, target_node):
     """
@@ -298,6 +306,7 @@ def connected_edges(start_node, target_node, num_edges):
     """
     start_nodeをパスのスタートノードとし、かつtarget_nodeを含まない
     長さがnum_edgesのパスを含むグラフセットを返す
+    パスが仮想ノードを２個以上通るときnum_edgesよりも短いパスもグラフセットに含まれてしまう
 
     arguments:
     * start_node(node label)
@@ -366,20 +375,6 @@ def disjoint_paths(paths, path):
                 v = (j,i)
                 disjoint_elms += [[(i,v)], [(v,j)]]
     return paths.excluding(GraphSet(disjoint_elms))
-
-# def disjoint_paths(paths, path):
-#     """
-#     パスのグラフセットから指定したパスのlink-disjoint pathを求める
-#
-#     arguments:
-#     * paths(GraphSet)
-#     * path(list)
-#
-#     returns:
-#     * 
-#     """
-#     disjoint_elms = [[e] for e in path]
-#     return paths.excluding(GraphSet(disjoint_elms))
 
 def total_cost(cost_dict, path):
     """
@@ -496,7 +491,7 @@ if __name__ == "__main__":
     print "internal_edges", internal_edges(1)
     print "neighbor_nodes", neighbor_nodes(1)
     print "external_edges", external_edges(1)
-    print "two_internal_edges_subgraph", two_internal_edges_subgraph(1)
+    print "two_internal_edges_subgraph", two_internal_edges_subgraph(2)
     print "invalid_direction_elms", invalid_direction_elms(1, 4)
     print "directed_paths", directed_paths(1, 4)
     print "connected_edges", connected_edges(1, 4, 2)
