@@ -3,13 +3,13 @@
 """
 author Mio Kinno
 date 2016.7.22
+branch master
 file dat_utils.py
 
 モデルデータの各パラメータを取り出し、
 Pythonで使えるように加工する
-"""
 
-"""
+
 the following statements are model data format of BRITE, COST239, JPNM and NSFNET
 
 * number of demand path
@@ -38,6 +38,9 @@ param : TK :t:=
 
 * demand path
 param : DK :d:= 
+
+TODO: 2016.12.28
+drawing.pyの機能を統合するかの検討
 """
 
 from os import path
