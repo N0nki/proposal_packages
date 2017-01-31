@@ -19,6 +19,9 @@ class MultiDiGraph:
         self.edgelist = edgelist
 
     def edges_table(self):
+        """
+
+        """
         d = defaultdict(list)
         for i,j,w in edgelist:
             d[(i,j)].append((i,j,w))
@@ -26,6 +29,24 @@ class MultiDiGraph:
                 del d[(i,j)]
                 d[(j,i)].append((i,j,w))
         return d
+
+    def append_virtual_nodes(self):
+        """
+
+        """
+        d = edges_table()
+        virtual_nodes_graph = []
+        for e1,e2 in d.values():
+            i, j, w = e2[0], e2[1], e2[2]
+            v = (i,j)
+            virtual_nodes_graph += [e1, (i,v,cost), (v,j,0)]
+        return virtual_nodes_graph
+
+    def virtual_nodes(self):
+        """
+
+        """
+
 
 if __name__ == "__main__":
     edgelist = [(1,2,1),(1,3,2),(2,3,3),(2,4,4),(3,4,5),
