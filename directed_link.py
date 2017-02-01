@@ -471,8 +471,8 @@ def calc_probability(probabilities, path):
 
 if __name__ == "__main__":
     # 動作確認
-    edgelist = [(1,2,1),(1,3,2),(2,3,3),(2,4,4),(3,4,5),
-                (2,1,-1),(3,1,-2),(3,2,-3),(4,2,-4),(4,3,-5)]
+    edgelist = [(1,2,10),(1,3,20),(2,3,30),(2,4,40),(3,4,50),
+                (2,1,-10),(3,1,-20),(3,2,-30),(4,2,-40),(4,3,-50)]
     prob = {(i,j): .99 for i,j,cost in append_virtual_nodes()}
 
     GraphSet.set_universe(append_virtual_nodes())
