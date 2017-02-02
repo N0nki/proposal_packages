@@ -215,10 +215,14 @@ if __name__ == "__main__":
     edgelist = [(1,2,10),(1,3,20),(2,3,30),(2,4,40),(3,4,50),
                 (2,1,-10),(3,1,-20),(3,2,-30),(4,2,-40),(4,3,-50)]
     read_edgelist(edgelist)
+    GraphSet.set_universe(append_virtual_nodes())
     print "append_virtual_nodes", append_virtual_nodes()
     print "virtual_node_edges", virtual_node_edges()
     print "virtual_nodes", virtual_nodes()
     print "predecessor_nodes", predecessor_nodes(4)
     print "internal_edges", internal_edges(1)
     print "two_internal_edges_subgraph", two_internal_edges_subgraph(1)
-    print "directed_paths", directed_paths(1,4)
+    print "invalid_direction_elms", invalid_direction_elms(1, 4)
+    print "enumerate paths from start1 to target4"
+    for path in directed_paths(1, 4):
+        print path
