@@ -104,6 +104,13 @@ def virtual_nodes():
     return v_nodes
 
 def original_nodes():
+    """
+    仮想ノード追加前のグラフのノードのリストを返す
+
+    returns:
+    * nodes(node set)
+      仮想ノード追加前のグラフのノードを格納したリスト
+    """
     global edgelist
     edges = [[i,j] for i,j,cost in edgelist]
     return set(reduce(lambda x,y: x + y, edges))
