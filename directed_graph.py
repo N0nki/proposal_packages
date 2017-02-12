@@ -18,6 +18,12 @@ graphillionで有向グラフのパス列挙を行えるようにする
   そのノードに流入するリンク2つから構成されるすべてのサブグラフを除外する
   着目しているノードに流入するリンク数をnとすれば除外するサブグラフはnC2個存在する
 
+
+ # 使い方
+1. NetworkXの有向グラフオブジェクトを作成する
+   辺重みは付けても付けなくてもよい
+2. GraphSet.set_universe(G.edges())を実行してGraphillionにグラフを読み込ませる
+3. directed_paths(G, s, t)を実行する
 """
 
 from itertools import combinations
