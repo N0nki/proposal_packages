@@ -22,9 +22,9 @@ v3のリファクタリング
 仮想ノードの追加は以下のように行う
 
 * リンク(i,j,cost1)に対して
-   仮想ノードを設けずにリンク(i,j,cost1)をそのまま使用する  
+   仮想ノードを設けずにリンク(i,j,cost1)をそのまま使用する
 
-* リンク(j,i,cost2)に対して  
+* リンク(j,i,cost2)に対して
   仮想ノードj_iを設ける
   リンク(j,j_i,cost2),(j_i,i,0)を追加する
 
@@ -200,6 +200,7 @@ def original_path(path):
     * path(list)
       辺を表すタプル(i,j)を要素とするリスト
 
+    returns:
     * o_path(list)
       pathから仮想ノードを除去した元のグラフのパス
     """
@@ -439,7 +440,7 @@ def convert_common_logarithm(probabilities):
 
 def calc_probability(probabilities, path):
     """
-    パスの利用確率を求める  
+    パスの利用確率を求める
     各リンクの故障は独立に起こるとする
 
     利用確率の昇順・降順でパス列挙を行いたいのでmax_iter(),min_iter()との連携を考える
