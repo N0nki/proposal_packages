@@ -1,7 +1,7 @@
 # coding: utf-8
 
 """
-NetworkX multiDiGraph implemented by Graphillion
+NetworkX like multiDiGraph implemented by Graphillion
 """
 
 from itertools import combinations
@@ -20,7 +20,12 @@ class MultiDiGraph:
 
     def edges_table(self):
         """
+        キーが(i,j)、値が[(i,j,cost1),(j,i,cost2)]の辞書を返す
 
+        returns:
+        * d(defaultdict)
+          key: (i,j)
+          value: [(i,j,cost1),(j,i,cost2)]
         """
         d = defaultdict(list)
         for i,j,w in edgelist:
@@ -46,6 +51,7 @@ class MultiDiGraph:
         """
 
         """
+        d  = edges_table()
 
 
 if __name__ == "__main__":
