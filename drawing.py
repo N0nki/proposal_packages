@@ -36,7 +36,7 @@ def get_node_pos(model):
     """
     path = "../model_data_coordinates/"
     data = {"cost239": path + "cost239_coordinates_fixed.csv",
-            "jpn48":   path + "jpn_coordinates.csv",
+            "jpn48":   path + "jpn48_coordinates.csv",
             "nsfnet":  path + "NSFNET_coordinates.csv",
             "akita":   path + "akita_cities_coordinates.csv"}
     csv = pd.read_csv(data[model])
@@ -90,7 +90,7 @@ def draw_model_data(model, path=None, figsize=None):
         nx.draw_networkx_edges(nx.Graph(data=path), pos, edgelist=path,
                                edge_color="r", width=3.0)
     plt.xticks([])
-    plt.yticks([]) 
+    plt.yticks([])
     plt.show()
 
 if __name__ == '__main__':
