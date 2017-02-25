@@ -9,7 +9,7 @@ file drawing.py
 モデルデータcost239,jpn,nsfnet,akitaを描画する
 figsizeは以下の値を指定すると見やすい
 cost239 (9, 6)
-jpn48 (18, 15)
+jpn (18, 15)
 nsfnet (15, 9)or(6, 9)
 akita (15, 18)or(12, 15)or(6, 9)
 """
@@ -27,7 +27,7 @@ def get_node_pos(model):
     arguments:
     * model(string)
       モデルデータの名前。以下のいずれかを指定する
-      cost239,jpn48,nsfnet,akita
+      cost239,jpn12or25or48,nsfnet,akita
 
     returns:
     * pos(dictionary)
@@ -36,6 +36,8 @@ def get_node_pos(model):
     """
     path = "../model_data_coordinates/"
     data = {"cost239": path + "cost239_coordinates_fixed.csv",
+            "jpn12":   path + "jpn12_coordinates.csv",
+            "jpn25":   path + "jpn25_coordinates.csv",
             "jpn48":   path + "jpn48_coordinates.csv",
             "nsfnet":  path + "NSFNET_coordinates.csv",
             "akita":   path + "akita_cities_coordinates.csv"}
@@ -56,6 +58,8 @@ def model_data_graph(model):
     """
     path = "../model_data/"
     data = {"cost239": path + "COST239/cost239_EQ_200.dat",
+            "jpn12":   path + "JPNM/JPN12/JPN12_EQ_200.dat",
+            "jpn25":   path + "JPNM/JPN25/JPN25_EQ_200.dat",
             "jpn48":   path + "JPNM/JPN48/JPN48_EQ_200.dat",
             "nsfnet":  path + "NSFNET/nsfnet_EQ_200.dat",
             "akita":   path + "Akita/akita_TE.dat"}
@@ -100,4 +104,5 @@ if __name__ == '__main__':
     G1 = nx.Graph(data=list(cost239_edges))
     G = model_data_graph("akita")
     print G.edges(), G.nodes()
-    draw_model_data("nsfnet", figsize=(15, 9), path=[(0,1),(1,2)])
+    draw_model_data("jpn25", figsize=(12, 9), path=[(0,1),(1,2)])
+    draw_model_data("cost239", figsize=(9, 6), path=[(0,1),(1,2)])
