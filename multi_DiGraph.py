@@ -38,7 +38,11 @@ class MultiDiGraph:
 
     def append_virtual_nodes(self):
         """
+        仮想ノードを追加したグラフの辺のリストを返す
 
+        returns:
+        * virtual_nodes_graph(edge list)
+          仮想ノードを追加したグラフの重み付き辺のタプルを要素とするリスト
         """
         d = self.edges_table()
         virtual_nodes_graph = []
@@ -63,6 +67,9 @@ class MultiDiGraph:
             v_nodes.append((i,j))
         return v_nodes
 
+    def virtual_nodes_iter():
+        pass
+
     def original_nodes(self):
         """
         仮想ノード追加前のグラフのノードのリストを返す
@@ -74,6 +81,50 @@ class MultiDiGraph:
         edges = [[i,j] for i,j,w in self.edgelist]
         return set(reduce(lambda x,y: x + y, edges))
 
+    def original_nodes_iter():
+        pass
+
+    def predecessor_nodes(self, node):
+        """
+        nodeへの流入リンク(predecessor, node)を構成するノードpredecessorを返す
+
+        returns:
+        * predecessors(node list)
+          predecessorノードを格納したリスト
+        """
+        v_nodes = self.virtual_nodes()
+        predecessors = []
+        for i,j in v_nodes:
+            if node == i:
+                predecessors.append(j)
+            if node == j:
+                predecessors.append((i,j))
+        return predecessors
+
+    def predecessors_iter(self, node):
+        """
+        nodeへの流入リンク(predecessor, node)を構成するノードpredecessorを返す
+
+        yields:
+        * predecessors
+          predecessorノードを格納したリスト
+        """
+        v_nodes = self.virtual_nodes()
+        for i,j in v_nodes:
+            if node == i:
+                yield j
+            if node == j:
+                yield (i,j)
+
+    def neighbor_nodes(self, node):
+        pass
+
+    def neighbors_iter(self, node):
+        pass
+
+    def degree(self, node):
+        pass
+
 if __name__ == "__main__":
     edgelist = [(1,2,1),(1,3,2),(2,3,3),(2,4,4),(3,4,5),
                 (2,1,-1),(3,1,-2),(3,2,-3),(4,2,-4),(4,3,-5)]
@@ -82,4 +133,6 @@ if __name__ == "__main__":
     print("append_virtual_nodes", G.append_virtual_nodes())
     print("virtual_nodes", G.virtual_nodes())
     # print("original_nodes", G.original_nodes())
-    G.original_nodes()
+    print("original_nodes", G.original_nodes())
+    for p in G.predecessors_iter(1):
+        print(p)
