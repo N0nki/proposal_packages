@@ -1,18 +1,12 @@
-# coding: utf-8
-
 """
 author Mio Kinno
-date 2016.11.25
-branch master
+date 2017.6.21
+branch py3
 file directed_link.py
 
 仮想ノードを追加し(i,j,cost1),(j,i,cost2)のような構成ノードは同じだが方向性が異なるリンクを
 Graphillionで扱えるようにする
 これまで2個追加していた仮想ノードをこのモジュールでは1個に減らした
-
-v3のリファクタリング
-* メソッド名、変数名の整理
-* edgelistをグローバル変数化
 
 
 # 動作概要
@@ -46,9 +40,26 @@ v3のリファクタリング
 2. read_edgelist(edgelist)を実行してモジュールにedgelistを読み込ませる
 3. GraphSet.set_universe(append_virtual_nodes())を実行してGraphillionに仮想ノードを追加したグラフを読み込ませる
 4. directed_paths(start_node, target_node)を実行する
+
+TODO: 2017.6.21
+GraphSet.set_universe()のソースコード内のsource=min(e[0], e[1], source)にどう対処するか
+Python3ではintとtuple間で不等号が定義されていない
+仮想ノードが定義されている辺を表すtupleは(i,(i,j),cost)のように表される
+したがってe[0]=i, e[1]=(i,j)であるが，不等号が未定義なのでmin関数が例外を送出してユニバースを定義できない
+
+解決策の候補
+1. デフォルト引数traversal="bfs"に別の値を渡す
+source=min(e[0], e[1], source)の命令文は
+if traversal=="bfs" or traversal=="dfs":内に記述されているため，別の文字を渡すことで，実行を回避できるのではないか
+試しに空文字を渡してみたが，変わらず例外が送出される
+
+2. (i,(i,j),cost)を((i,),(i,j),cost)と定義するように変更する
+tuple間には不等号が定義されているため例外が送出されないはずである
+しかし，現状このモジュールは(i,(i,j),cost)の定義が前提の実装を行っているため，多くの変更を要する
 """
 
 from itertools import combinations
+from functools import reduce
 from collections import defaultdict
 import math
 import random
@@ -250,7 +261,7 @@ def two_internal_edges_subgraph(node):
         if len(in_edges) < 2:
             raise ValueError("Error Message")
     except ValueError:
-        print "node {} has no two and over internal edges".format(node)
+        print("node {} has no two and over internal edges".format(node))
     else:
         subgraphs = [[e1, e2] for e1,e2 in combinations(in_edges, 2)]
         return subgraphs
@@ -476,28 +487,27 @@ if __name__ == "__main__":
                 (2,1,-10),(3,1,-20),(3,2,-30),(4,2,-40),(4,3,-50)]
     prob = {(i,j): .99 for i,j,cost in append_virtual_nodes()}
 
-    GraphSet.set_universe(append_virtual_nodes())
+    read_edgelist(edgelist)
+    print(append_virtual_nodes())
+    GraphSet.set_universe(append_virtual_nodes(), traversal="")
 
-    print "edges_table", edges_table()
-    print "append_virtual_nodes", append_virtual_nodes()
-    print "virtual_node_edges", virtual_node_edges()
-    print "virtual_nodes", virtual_nodes()
-    print "original_nodes", original_nodes()
-    print "predecessor_nodes", predecessor_nodes(1)
-    print "internal_edges", internal_edges(1)
-    print "neighbor_nodes", neighbor_nodes(1)
-    print "external_edges", external_edges(1)
-    print "two_internal_edges_subgraph", two_internal_edges_subgraph(1)
-    print "two_internal_edges_subgraph", two_internal_edges_subgraph((2,1))
-    print "invalid_direction_elms", invalid_direction_elms(1, 4)
-    print "directed_paths", directed_paths(1, 4)
-    print "connected_edges", connected_edges(1, 4, 2)
-    di_paths_1_4 = directed_paths(1, 4)
-    choiced = directed_paths(1, 4).choice()
-    print "disjoint_paths", disjoint_paths(di_paths_1_4, [(2, (2, 1)), ((2, 1), 1), (3, 1), (3, 2)])
-    print "choiced", choiced
-    print "original_path", original_path(choiced)
-    print "probability_dict", probability_dict()
-    # for p in directed_paths(1, 4):
-    #     print p
-    #     print calc_probability(prob, p)
+    # print("edges_table", edges_table())
+    # print("append_virtual_nodes", append_virtual_nodes())
+    # print("virtual_node_edges", virtual_node_edges())
+    # print("virtual_nodes", virtual_nodes())
+    # print("original_nodes", original_nodes())
+    # print("predecessor_nodes", predecessor_nodes(1))
+    # print("internal_edges", internal_edges(1))
+    # print("neighbor_nodes", neighbor_nodes(1))
+    # print("external_edges", external_edges(1))
+    # print("two_internal_edges_subgraph", two_internal_edges_subgraph(1))
+    # print("two_internal_edges_subgraph", two_internal_edges_subgraph((2,1)))
+    # print("invalid_direction_elms", invalid_direction_elms(1, 4))
+    # print("directed_paths", directed_paths(1, 4))
+    # print("connected_edges", connected_edges(1, 4, 2))
+    # di_paths_1_4 = directed_paths(1, 4)
+    # choiced = directed_paths(1, 4).choice()
+    # print("disjoint_paths", disjoint_paths(di_paths_1_4, [(2, (2, 1)), ((2, 1), 1), (3, 1), (3, 2)]))
+    # print("choiced", choiced)
+    # print("original_path", original_path(choiced))
+    # print("probability_dict", probability_dict())
