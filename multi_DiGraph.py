@@ -18,6 +18,8 @@ class MultiDiGraph:
     """
     def __init__(self, edgelist):
         self.edgelist = edgelist
+        virtual_nodes_graph = self.append_virtual_nodes()
+        GraphSet.set_universe(virtual_nodes_graph)
 
     def edges_table(self):
         """
@@ -52,6 +54,9 @@ class MultiDiGraph:
             virtual_nodes_graph += [e1, (i,v,w), (v,j,0)]
         return virtual_nodes_graph
 
+    def universe(self):
+        return GraphSet.universe()
+
     def virtual_nodes(self):
         """
         仮想ノードのリストを返す
@@ -67,7 +72,7 @@ class MultiDiGraph:
             v_nodes.append((i,j))
         return v_nodes
 
-    def virtual_nodes_iter():
+    def virtual_nodes_iter(self):
         pass
 
     def original_nodes(self):
@@ -123,16 +128,16 @@ class MultiDiGraph:
         pass
 
     def degree(self, node):
-        pass
+        return len(GraphSet({}).graph_size(1).including(node))
 
 if __name__ == "__main__":
     edgelist = [(1,2,1),(1,3,2),(2,3,3),(2,4,4),(3,4,5),
                 (2,1,-1),(3,1,-2),(3,2,-3),(4,2,-4),(4,3,-5)]
     G = MultiDiGraph(edgelist)
+    print("Universe", G.universe())
     print("edges_table", G.edges_table())
-    print("append_virtual_nodes", G.append_virtual_nodes())
     print("virtual_nodes", G.virtual_nodes())
-    # print("original_nodes", G.original_nodes())
+    print("degree", G.degree(1))
     print("original_nodes", G.original_nodes())
     for p in G.predecessors_iter(1):
         print(p)
