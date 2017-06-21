@@ -1,9 +1,7 @@
-# coding: utf-8
-
 """
 author Mio Kinno
-date 2016.7.22
-branch master
+date 2017.6.21
+branch py3
 file dat_utils.py
 
 モデルデータの各パラメータを取り出し、
@@ -38,9 +36,6 @@ param : TK :t:=
 
 * demand path
 param : DK :d:= 
-
-TODO: 2016.12.28
-drawing.pyの機能を統合するかの検討
 """
 
 from os import path
@@ -124,7 +119,7 @@ class Dat:
         for line in lines.splitlines():
             if line.startswith(";"): break
             line = line.strip()
-            params = re.split(r"\s*", line)
+            params = re.split(r"\s+", line)
             yield func(params)
 
     def __get_attr2(self, param):
@@ -199,13 +194,13 @@ if __name__ == "__main__":
     # for i,t in enumerate(cost239_EQ_200.traffic):
     #     print i,t
     for e in cost239_EQ_200.read_params("target", lambda params: params):
-        print e
-    print "file name", cost239_EQ_200.filename
-    print "dk", cost239_EQ_200.dk
-    print "m", cost239_EQ_200.m
-    print "n", cost239_EQ_200.n
-    print "capacity", cost239_EQ_200.capacity
-    print "cost", cost239_EQ_200.cost
-    print "hop", cost239_EQ_200.hop
-    print "traffic", cost239_EQ_200.traffic
-    print "DK", cost239_EQ_200.DK
+        print(e)
+    print("file name", cost239_EQ_200.filename)
+    print("dk", cost239_EQ_200.dk)
+    print("m", cost239_EQ_200.m)
+    print("n", cost239_EQ_200.n)
+    print("capacity", cost239_EQ_200.capacity)
+    print("cost", cost239_EQ_200.cost)
+    print("hop", cost239_EQ_200.hop)
+    print("traffic", cost239_EQ_200.traffic)
+    print("DK", cost239_EQ_200.DK)
