@@ -103,6 +103,6 @@ if __name__ == '__main__':
     cost239_edges = cost239.read_params("cost", lambda p: (int(p[0]), int(p[1])))
     G1 = nx.Graph(data=list(cost239_edges))
     G = model_data_graph("akita")
-    print G.edges(), G.nodes()
+    print(G.edges(), G.nodes())
     draw_model_data("jpn25", figsize=(12, 9), path=[(0,1),(1,2)])
     draw_model_data("cost239", figsize=(9, 6), path=[(0,1),(1,2)])

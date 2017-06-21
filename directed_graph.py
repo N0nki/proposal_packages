@@ -2,8 +2,8 @@
 
 """
 author Mio Kinno
-date 2016.12.7
-branch master
+date 2017.6.21
+branch py3
 file directed_graph.py
 
 graphillionで有向グラフのパス列挙を行えるようにする
@@ -116,10 +116,10 @@ if __name__ == "__main__":
     G = nx.DiGraph(data=[("a","b"), ("a","d"), ("b","c"), ("b","e"),
                          ("d","c"), ("d", "e"), ("e","f"), ("f","c")])
     GraphSet.set_universe(G.edges())
-    print internal_edges(G, "b")
-    print two_internal_edges_subgraph(G, "c")
-    print invalid_direction_elms(G, "b")
-    print directed_paths(G, "b", "c")
-    print "the following results are directed_paths of start node to target node"
+    print(internal_edges(G, "b"))
+    print(two_internal_edges_subgraph(G, "c"))
+    print(invalid_direction_elms(G, "b"))
+    print(directed_paths(G, "b", "c"))
+    print("the following results are directed_paths of start node to target node")
     for path in directed_paths(G, "b", "c"):
-        print path
+        print(path)
