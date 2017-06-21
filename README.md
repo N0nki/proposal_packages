@@ -1,5 +1,7 @@
 # proposal_packages
 
+Python3.xに対応
+
 モデルデータ操作やGraphillionの方向性ラッパーをPythonのモジュールにしたファイル
 
 * **dat_utils.py**  
