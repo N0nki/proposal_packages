@@ -51,11 +51,13 @@ Python3ではintとtuple間で不等号が定義されていない
 1. デフォルト引数traversal="bfs"に別の値を渡す
 source=min(e[0], e[1], source)の命令文は
 if traversal=="bfs" or traversal=="dfs":内に記述されているため，別の文字を渡すことで，実行を回避できるのではないか
-試しに空文字を渡してみたが，変わらず例外が送出される
+空文字を渡すことでset_universeにedgelistを渡すことができた．しかし，GraphSet.pathsのなかでもminによってe[0],e[1]の
+大小比較を行っていて，しかもset_universeのように回避することができない．以上のことから，この解決策は不適切であることがわかった
 
 2. (i,(i,j),cost)を((i,),(i,j),cost)と定義するように変更する
 tuple間には不等号が定義されているため例外が送出されないはずである
 しかし，現状このモジュールは(i,(i,j),cost)の定義が前提の実装を行っているため，多くの変更を要する
+解決策1.が棄却されたのでモジュールの修正は2の施策によって行うこととする
 """
 
 from itertools import combinations
@@ -489,25 +491,25 @@ if __name__ == "__main__":
 
     read_edgelist(edgelist)
     print(append_virtual_nodes())
-    GraphSet.set_universe(append_virtual_nodes(), traversal="")
+    GraphSet.set_universe(append_virtual_nodes(), traversal="as-is")
 
-    # print("edges_table", edges_table())
-    # print("append_virtual_nodes", append_virtual_nodes())
-    # print("virtual_node_edges", virtual_node_edges())
-    # print("virtual_nodes", virtual_nodes())
-    # print("original_nodes", original_nodes())
-    # print("predecessor_nodes", predecessor_nodes(1))
-    # print("internal_edges", internal_edges(1))
-    # print("neighbor_nodes", neighbor_nodes(1))
-    # print("external_edges", external_edges(1))
-    # print("two_internal_edges_subgraph", two_internal_edges_subgraph(1))
-    # print("two_internal_edges_subgraph", two_internal_edges_subgraph((2,1)))
-    # print("invalid_direction_elms", invalid_direction_elms(1, 4))
-    # print("directed_paths", directed_paths(1, 4))
-    # print("connected_edges", connected_edges(1, 4, 2))
-    # di_paths_1_4 = directed_paths(1, 4)
-    # choiced = directed_paths(1, 4).choice()
-    # print("disjoint_paths", disjoint_paths(di_paths_1_4, [(2, (2, 1)), ((2, 1), 1), (3, 1), (3, 2)]))
-    # print("choiced", choiced)
-    # print("original_path", original_path(choiced))
-    # print("probability_dict", probability_dict())
+    print("edges_table", edges_table())
+    print("append_virtual_nodes", append_virtual_nodes())
+    print("virtual_node_edges", virtual_node_edges())
+    print("virtual_nodes", virtual_nodes())
+    print("original_nodes", original_nodes())
+    print("predecessor_nodes", predecessor_nodes(1))
+    print("internal_edges", internal_edges(1))
+    print("neighbor_nodes", neighbor_nodes(1))
+    print("external_edges", external_edges(1))
+    print("two_internal_edges_subgraph", two_internal_edges_subgraph(1))
+    print("two_internal_edges_subgraph", two_internal_edges_subgraph((2,1)))
+    print("invalid_direction_elms", invalid_direction_elms(1, 4))
+    print("directed_paths", directed_paths(1, 4))
+    print("connected_edges", connected_edges(1, 4, 2))
+    di_paths_1_4 = directed_paths(1, 4)
+    choiced = directed_paths(1, 4).choice()
+    print("disjoint_paths", disjoint_paths(di_paths_1_4, [(2, (2, 1)), ((2, 1), 1), (3, 1), (3, 2)]))
+    print("choiced", choiced)
+    print("original_path", original_path(choiced))
+    print("probability_dict", probability_dict())
