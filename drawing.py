@@ -96,10 +96,9 @@ def draw_model_data(model, path=None, figsize=None, savefig=False):
                                edge_color="r", width=3.0)
     plt.xticks([])
     plt.yticks([])
-    plt.show()
-
     if savefig:
         plt.savefig("./model_{}.png", dpi=400, bbox_inches="tight", transparent=True)
+    plt.show()
 
 if __name__ == '__main__':
     # 動作確認
