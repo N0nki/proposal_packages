@@ -99,7 +99,7 @@ def draw_model_data(model, path=None, figsize=None, savefig=False):
     plt.show()
 
     if savefig:
-        plt.savefig("./model_{}.png", dpi=400, bbox_inches"tight", transparent=True)
+        plt.savefig("./model_{}.png", dpi=400, bbox_inches="tight", transparent=True)
 
 if __name__ == '__main__':
     # 動作確認
