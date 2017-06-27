@@ -18,7 +18,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from dat_utils import Dat
+from proposal_packages.dat_utils import Dat
 
 def get_node_pos(model):
     """
