@@ -97,7 +97,7 @@ def draw_model_data(model, path=None, figsize=None, savefig=False):
     plt.xticks([])
     plt.yticks([])
     if savefig:
-        plt.savefig("./model_{}.png", dpi=400, bbox_inches="tight", transparent=True)
+        plt.savefig("./model_{}.png".format(model), dpi=400, bbox_inches="tight", transparent=True)
     plt.show()
 
 if __name__ == '__main__':
