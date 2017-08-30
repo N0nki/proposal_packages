@@ -1,5 +1,7 @@
 # proposal_packages
 
+Python3.xに対応
+
 モデルデータ操作やGraphillionの方向性ラッパーをPythonのモジュールにしたファイル
 
 * **dat_utils.py**  
@@ -18,3 +20,7 @@ Graphillionで双方向リンクを持つグラフののパス列挙を可能に
 
 * **drawing.py**  
 モデルデータのNetworkXグラフオブジェクトの作成、描画を行う
+
+## TODO
+
+- [ ] テストコードをちゃんと書く

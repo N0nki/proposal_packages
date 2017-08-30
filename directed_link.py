@@ -1,18 +1,11 @@
-# coding: utf-8
-
 """
-author Mio Kinno
-date 2016.11.25
-branch master
+author Mio Kinno date 2017.6.21
+branch py3
 file directed_link.py
 
 仮想ノードを追加し(i,j,cost1),(j,i,cost2)のような構成ノードは同じだが方向性が異なるリンクを
 Graphillionで扱えるようにする
 これまで2個追加していた仮想ノードをこのモジュールでは1個に減らした
-
-v3のリファクタリング
-* メソッド名、変数名の整理
-* edgelistをグローバル変数化
 
 
 # 動作概要
@@ -49,11 +42,15 @@ v3のリファクタリング
 """
 
 from itertools import combinations
+from functools import reduce
 from collections import defaultdict
 import math
 import random
 
 from graphillion import GraphSet
+
+VIRTUAL_NODE_DIGIT_I = 1000
+VIRTUAL_NODE_DIGIT_J = 100
 
 def read_edgelist(data):
     """
@@ -84,6 +81,22 @@ def edges_table():
             d[(j,i)].append((i,j,cost))
     return d
 
+def virtual_node_expression(i, j):
+    """
+    ノードi,j間の仮想ノードを返す
+    QQQ 2017.8.29
+    いまのところこの式を使う
+    """
+    return i * VIRTUAL_NODE_DIGIT_I + j * VIRTUAL_NODE_DIGIT_J
+
+def devide_virtual_node(v_node):
+    """
+    仮想ノードをノードi,jに分割する
+    """
+    i, j = divmod(v_node, VIRTUAL_NODE_DIGIT_I)
+    j = j // VIRTUAL_NODE_DIGIT_J
+    return (i, j)
+
 def append_virtual_nodes():
     """
     仮想ノードを追加したグラフの辺のリストを返す
@@ -96,8 +109,8 @@ def append_virtual_nodes():
     virtual_nodes_graph = []
     for e1,e2 in d.values():
         i, j, cost = e2[0], e2[1], e2[2]
-        v = (i,j)
-        virtual_nodes_graph += [e1, (i,v,cost), (v,j,0)]
+        v = virtual_node_expression(i, j)
+        virtual_nodes_graph += [e1, (i, v, cost), (v, j, 0)]
     return virtual_nodes_graph
 
 def virtual_node_edges():
@@ -112,8 +125,8 @@ def virtual_node_edges():
     edges = []
     for e1,e2 in d.values():
         i, j, cost = e2[0], e2[1], e2[2]
-        v = (i,j)
-        edges += [[(i,v)], [(v,j)]]
+        v = virtual_node_expression(i, j)
+        edges += [[(i, v)], [(v, j)]]
     return edges
 
 def virtual_nodes():
@@ -128,7 +141,7 @@ def virtual_nodes():
     v_nodes = []
     for e1,e2 in d.values():
         i, j, cost = e2[0], e2[1], e2[2]
-        v_nodes.append((i,j))
+        v_nodes.append(virtual_node_expression(i, j))
     return v_nodes
 
 def original_nodes():
@@ -154,11 +167,11 @@ def predecessor_nodes(node):
     global edgelist
     v_nodes = virtual_nodes()
     predecessors = []
-    for i,j in v_nodes:
+    for i,j in map(devide_virtual_node, v_nodes):
         if node == i:
             predecessors.append(j)
         elif node == j:
-            predecessors.append((i,j))
+            predecessors.append(virtual_node_expression(i, j))
     return predecessors
 
 def neighbor_nodes(node):
@@ -207,14 +220,15 @@ def original_path(path):
     _path = path[:]
     o_path = []
     for i,j in _path:
-        if isinstance(i, tuple):
-            o_edge = (i[0], i[1])
-            o_path.append(o_edge)
-            _path.remove((i[0], i))
-        elif isinstance(j, tuple):
-            o_edge = (j[0], j[1])
-            o_path.append(o_edge)
-            _path.remove((j, j[1]))
+        v_nodes = virtual_nodes()
+        if i in v_nodes:
+            o_edge = devide_virtual_node(i)
+            o_path.append(devide_virtual_node(i))
+            _path.remove((o_edge[0], i))
+        elif j in v_nodes:
+            o_edge = devide_virtual_node(j)
+            o_path.append(devide_virtual_node(j))
+            _path.remove((j, o_edge[1]))
         else:
             o_path.append((i,j))
     return o_path
@@ -250,7 +264,7 @@ def two_internal_edges_subgraph(node):
         if len(in_edges) < 2:
             raise ValueError("Error Message")
     except ValueError:
-        print "node {} has no two and over internal edges".format(node)
+        print("node {} has no two and over internal edges".format(node))
     else:
         subgraphs = [[e1, e2] for e1,e2 in combinations(in_edges, 2)]
         return subgraphs
@@ -354,22 +368,41 @@ def disjoint_paths(paths, path):
     returns:
     * di_paths(GraphSet)
     """
+    disjoint_elms = [[e] for e in path]
+    return paths.excluding(GraphSet(disjoint_elms))
+
+def bidirectional_disjoint_paths(paths, path):
+    """
+    パスのグラフセットから指定したパスの双方向link-disjoint pathを求める
+    双方向にリンクが共有されないようにする
+    つまり(i,j), (j,v), (v,i)と共有されないパス集合が返る
+
+    arguments:
+    * paths(GraphSet)
+    * path(list)
+
+    returns:
+    * di_paths(GraphSet)
+    """
     disjoint_elms = []
     v_nodes = virtual_nodes()
     for e in path:
-        if isinstance(e[0], tuple):
-            disjoint_elms += [[e[0]], [e]]
-        elif isinstance(e[1], tuple):
-            disjoint_elms.append([e])
+        if e[0] in v_nodes:
+            i, j = devide_virtual_node(e[0])
+            disjoint_elms += [[(i,j)], [(e[0],i)], [(j,e[0])]]
+        elif e[1] in v_nodes:
+            j, i = devide_virtual_node(e[1])
+            disjoint_elms += [[(i,j)], [(e[1],i)], [(j,e[1])]]
         else:
             disjoint_elms.append([e])
             i, j = e[0], e[1]
-            v = (i,j)
+            v = virtual_node_expression(i, j)
             if v in v_nodes:
                 disjoint_elms += [[(i,v)], [(v,j)]]
             else:
-                v = (j,i)
+                v = virtual_node_expression(j, i)
                 disjoint_elms += [[(i,v)], [(v,j)]]
+    print(disjoint_elms)
     return paths.excluding(GraphSet(disjoint_elms))
 
 def total_cost(cost_dict, path):
@@ -473,31 +506,29 @@ def calc_probability(probabilities, path):
 if __name__ == "__main__":
     # 動作確認
     edgelist = [(1,2,10),(1,3,20),(2,3,30),(2,4,40),(3,4,50),
-                (2,1,-10),(3,1,-20),(3,2,-30),(4,2,-40),(4,3,-50)]
-    prob = {(i,j): .99 for i,j,cost in append_virtual_nodes()}
+                (2,1,10),(3,1,20),(3,2,30),(4,2,40),(4,3,50)]
 
+    read_edgelist(edgelist)
     GraphSet.set_universe(append_virtual_nodes())
 
-    print "edges_table", edges_table()
-    print "append_virtual_nodes", append_virtual_nodes()
-    print "virtual_node_edges", virtual_node_edges()
-    print "virtual_nodes", virtual_nodes()
-    print "original_nodes", original_nodes()
-    print "predecessor_nodes", predecessor_nodes(1)
-    print "internal_edges", internal_edges(1)
-    print "neighbor_nodes", neighbor_nodes(1)
-    print "external_edges", external_edges(1)
-    print "two_internal_edges_subgraph", two_internal_edges_subgraph(1)
-    print "two_internal_edges_subgraph", two_internal_edges_subgraph((2,1))
-    print "invalid_direction_elms", invalid_direction_elms(1, 4)
-    print "directed_paths", directed_paths(1, 4)
-    print "connected_edges", connected_edges(1, 4, 2)
+    print("edges_table", edges_table())
+    print("append_virtual_nodes", append_virtual_nodes())
+    print("universe", GraphSet.universe())
+    print("virtual_node_edges", virtual_node_edges())
+    print("virtual_nodes", virtual_nodes())
+    print("original_nodes", original_nodes())
+    print("predecessor_nodes", predecessor_nodes(1))
+    print("internal_edges", internal_edges(4))
+    print("neighbor_nodes", neighbor_nodes(1))
+    print("external_edges", external_edges(4))
+    print("two_internal_edges_subgraph", two_internal_edges_subgraph(2))
+    print("invalid_direction_elms", invalid_direction_elms(1, 4))
     di_paths_1_4 = directed_paths(1, 4)
-    choiced = directed_paths(1, 4).choice()
-    print "disjoint_paths", disjoint_paths(di_paths_1_4, [(2, (2, 1)), ((2, 1), 1), (3, 1), (3, 2)])
-    print "choiced", choiced
-    print "original_path", original_path(choiced)
-    print "probability_dict", probability_dict()
-    # for p in directed_paths(1, 4):
-    #     print p
-    #     print calc_probability(prob, p)
+    print("directed_paths", di_paths_1_4)
+    for path in di_paths_1_4:
+        print(path)
+    print("connected_edges", connected_edges(1, 4, 2))
+    print("disjoint_paths", disjoint_paths(di_paths_1_4, [(3,3200), (3200,2)]))
+    print("bidirectional_disjoint_paths", bidirectional_disjoint_paths(di_paths_1_4, [(4,4300), (4300,3), (3,3100), (3100,1)]))
+    print("original_path", original_path([(4, 4300), (4300, 3), (3, 3100), (3100, 1)]))
+    print("probability_dict", probability_dict())
