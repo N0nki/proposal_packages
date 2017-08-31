@@ -1,6 +1,7 @@
 """
-author Mio Kinno date 2017.6.21
-branch py3
+author Mio Kinno
+date 2017.6.21
+branch master
 file directed_link.py
 
 仮想ノードを追加し(i,j,cost1),(j,i,cost2)のような構成ノードは同じだが方向性が異なるリンクを
@@ -154,7 +155,7 @@ def original_nodes():
     """
     global edgelist
     edges = [[i,j] for i,j,cost in edgelist]
-    return set(reduce(lambda x,y: x + y, edges))
+    return list(set(reduce(lambda x,y: x + y, edges)))
 
 def predecessor_nodes(node):
     """
@@ -182,12 +183,12 @@ def neighbor_nodes(node):
     * node(node label)
 
     returns:
-    * neighbors(node set)
+    * neighbors(node list)
       neighborノードを格納したリスト
     """
     global edgelist
     neighbors = [list(l[0]) for l in external_edges(node)]
-    neighbors = set(reduce(lambda x,y: x + y, neighbors)) - {node}
+    neighbors = list(set(reduce(lambda x,y: x + y, neighbors)) - {node})
     return neighbors
 
 def external_edges(node):
@@ -282,7 +283,7 @@ def invalid_direction_elms(start_node, target_node):
     rule1とrule2をまとめたグラフセット形式のリスト
     """
     rule1 = internal_edges(start_node)
-    rule2_nodes = original_nodes() - {start_node, target_node}
+    rule2_nodes = set(original_nodes()) - {start_node, target_node}
     elms = [e for e in rule1]
     for node in rule2_nodes:
         try:
@@ -328,7 +329,7 @@ def connected_edges(start_node, target_node, num_edges):
     * di_path(GraphSet)
       有効性を考慮したパスだけを含むグラフセット
     """
-    all_nodes = original_nodes() | set(virtual_nodes())
+    all_nodes = set(original_nodes()) | set(virtual_nodes())
     v_nodes = virtual_nodes()
     degree_constraints = {}
     for node in all_nodes:
