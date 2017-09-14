@@ -7,6 +7,10 @@ branch master
 file drawing.py
 
 モデルデータcost239,jpn,nsfnet,akitaを描画する
+
+このモジュールを取り込んだファイルからmodel_data_coordinatesとmodel_dataへの
+適切な相対パスを設定すること
+
 figsizeは以下の値を指定すると見やすい
 cost239 (9, 6)
 jpn (18, 15)
@@ -18,7 +22,39 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from proposal_packages.dat_utils import Dat
+from dat_utils import Dat
+
+# パスのデフォルト値
+coordinate_path = "../model_data_coordinates/"
+model_path = "../model_data/"
+
+def set_default_coordinate_path(path=None):
+    """
+    model_data_coordinatesへのパスを設定する
+
+    arguments:
+    * path(string, optional)
+      model_data_coordinatesへのパス
+    """
+    global coordinate_path
+    if path is None:
+        coordinate_path = "../model_data_coordinates/"
+    else:
+        coordinate_path = path
+
+def set_default_model_path(path=None):
+    """
+    model_dataへのパスを設定する
+
+    arguments:
+    * path(string, optional)
+      model_dataへのパス
+    """
+    global model_path
+    if path is None:
+        model_path = "../model_data/"
+    else:
+        model_path = path
 
 def get_node_pos(model):
     """
@@ -34,13 +70,13 @@ def get_node_pos(model):
       key: node label
       value: node position
     """
-    path = "../model_data_coordinates/"
-    data = {"cost239": path + "cost239_coordinates_fixed.csv",
-            "jpn12":   path + "jpn12_coordinates.csv",
-            "jpn25":   path + "jpn25_coordinates.csv",
-            "jpn48":   path + "jpn48_coordinates.csv",
-            "nsfnet":  path + "NSFNET_coordinates.csv",
-            "akita":   path + "akita_cities_coordinates.csv"}
+    global coordinate_path
+    data = {"cost239": coordinate_path + "cost239_coordinates_fixed.csv",
+            "jpn12":   coordinate_path + "jpn12_coordinates.csv",
+            "jpn25":   coordinate_path + "jpn25_coordinates.csv",
+            "jpn48":   coordinate_path + "jpn48_coordinates.csv",
+            "nsfnet":  coordinate_path + "NSFNET_coordinates.csv",
+            "akita":   coordinate_path + "akita_cities_coordinates.csv"}
     csv = pd.read_csv(data[model])
     coordinates = zip(csv["longitude"], csv["latitude"])
     pos = {city: coordinate for city,coordinate in zip(csv["index"], coordinates)}
@@ -56,13 +92,13 @@ def model_data_graph(model):
     returns:
     * G(networkx Graph object)
     """
-    path = "../model_data/"
-    data = {"cost239": path + "COST239/cost239_EQ_200.dat",
-            "jpn12":   path + "JPNM/JPN12/JPN12_EQ_200.dat",
-            "jpn25":   path + "JPNM/JPN25/JPN25_EQ_200.dat",
-            "jpn48":   path + "JPNM/JPN48/JPN48_EQ_200.dat",
-            "nsfnet":  path + "NSFNET/nsfnet_EQ_200.dat",
-            "akita":   path + "Akita/akita_TE.dat"}
+    global model_path
+    data = {"cost239": model_path + "COST239/cost239_EQ_200.dat",
+            "jpn12":   model_path + "JPNM/JPN12/JPN12_EQ_200.dat",
+            "jpn25":   model_path + "JPNM/JPN25/JPN25_EQ_200.dat",
+            "jpn48":   model_path + "JPNM/JPN48/JPN48_EQ_200.dat",
+            "nsfnet":  model_path + "NSFNET/nsfnet_EQ_200.dat",
+            "akita":   model_path + "Akita/akita_TE.dat"}
     model_data = Dat(data[model])
     edges = model_data.read_params("cost", lambda p: (int(p[0]), int(p[1])))
     G = nx.Graph(data=edges)
