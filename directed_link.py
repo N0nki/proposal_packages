@@ -84,15 +84,29 @@ def edges_table():
 
 def virtual_node_expression(i, j):
     """
-    ノードi,j間の仮想ノードを返す
+    リンク(j,i)間の仮想ノードを返す
     QQQ 2017.8.29
     いまのところこの式を使う
+
+    arguments:
+    * i(node label)
+    * j(node label)
+
+    returns:
+    * v_node(node label)
+      リンク(j,i)間の仮想ノード
     """
     return i * VIRTUAL_NODE_DIGIT_I + j * VIRTUAL_NODE_DIGIT_J
 
 def devide_virtual_node(v_node):
     """
     仮想ノードをノードi,jに分割する
+
+    arguments:
+    * v_node(virtual node label)
+
+    returns:
+    * (i,j)(tuple)
     """
     i, j = divmod(v_node, VIRTUAL_NODE_DIGIT_I)
     j = j // VIRTUAL_NODE_DIGIT_J
@@ -519,11 +533,11 @@ if __name__ == "__main__":
     print("virtual_nodes", virtual_nodes())
     print("original_nodes", original_nodes())
     print("predecessor_nodes", predecessor_nodes(1))
-    print("internal_edges", internal_edges(4))
+    print("internal_edges", internal_edges(2100))
     print("neighbor_nodes", neighbor_nodes(1))
     print("external_edges", external_edges(4))
-    print("two_internal_edges_subgraph", two_internal_edges_subgraph(2))
-    print("invalid_direction_elms", invalid_direction_elms(1, 4))
+    print("two_internal_edges_subgraph", two_internal_edges_subgraph(2100))
+    print("invalid_direction_elms", invalid_direction_elms(4, 3))
     di_paths_1_4 = directed_paths(1, 4)
     print("directed_paths", di_paths_1_4)
     for path in di_paths_1_4:
