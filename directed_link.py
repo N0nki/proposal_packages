@@ -417,7 +417,6 @@ def bidirectional_disjoint_paths(paths, path):
             else:
                 v = virtual_node_expression(j, i)
                 disjoint_elms += [[(i,v)], [(v,j)]]
-    print(disjoint_elms)
     return paths.excluding(GraphSet(disjoint_elms))
 
 def total_cost(cost_dict, path):
