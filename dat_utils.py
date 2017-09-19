@@ -87,8 +87,6 @@ class Dat:
         self.__capacity = "capacity"
         self.__start    = "start"
         self.__target   = "target"
-        self.__start    = "start"
-        self.__target   = "target"
         self.__DK       = "DK"
 
     def __get_attr1(self, param):
