@@ -144,6 +144,22 @@ def virtual_node_edges():
         edges += [[(i, v)], [(v, j)]]
     return edges
 
+def virtual_node_table():
+    """
+    キーがリンク(i,j)，値が(i,j)間の仮想ノードである辞書を返す
+
+    returns:
+    * v_table(dict)
+    """
+    v_table = {}
+    d = edges_table()
+    edges = []
+    for e1,e2 in d.values():
+        i, j, cost = e2[0], e2[1], e2[2]
+        v = virtual_node_expression(i, j)
+        v_table[(i,j)] = v
+    return v_table
+
 def virtual_nodes():
     """
     仮想ノードのリストを返す
@@ -181,8 +197,9 @@ def predecessor_nodes(node):
     """
     global edgelist
     v_nodes = virtual_nodes()
+    v_table = virtual_node_table()
     predecessors = []
-    for i,j in map(devide_virtual_node, v_nodes):
+    for i,j in v_table.keys():
         if node == i:
             predecessors.append(j)
         elif node == j:
@@ -234,15 +251,16 @@ def original_path(path):
     """
     _path = path[:]
     o_path = []
+    v_table = virtual_node_table()
     for i,j in _path:
         v_nodes = virtual_nodes()
         if i in v_nodes:
-            o_edge = devide_virtual_node(i)
-            o_path.append(devide_virtual_node(i))
+            o_edge = v_table[i]
+            o_path.append(v_table[i])
             _path.remove((o_edge[0], i))
         elif j in v_nodes:
-            o_edge = devide_virtual_node(j)
-            o_path.append(devide_virtual_node(j))
+            o_edge = v_table[j]
+            o_path.append(v_table[j])
             _path.remove((j, o_edge[1]))
         else:
             o_path.append((i,j))
@@ -401,12 +419,13 @@ def bidirectional_disjoint_paths(paths, path):
     """
     disjoint_elms = []
     v_nodes = virtual_nodes()
+    v_table = virtual_node_table()
     for e in path:
         if e[0] in v_nodes:
-            i, j = devide_virtual_node(e[0])
+            i, j = v_table[e[0]]
             disjoint_elms += [[(i,j)], [(e[0],i)], [(j,e[0])]]
         elif e[1] in v_nodes:
-            j, i = devide_virtual_node(e[1])
+            j, i = v_table[e[1]]
             disjoint_elms += [[(i,j)], [(e[1],i)], [(j,e[1])]]
         else:
             disjoint_elms.append([e])
