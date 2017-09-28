@@ -19,7 +19,8 @@ dl.read_edgelist(cost239.cost)
 GraphSet.set_universe(dl.append_virtual_nodes())
 
 # 任意順序で列挙
-paths = GraphSet.paths(0, 10)
+paths = dl.directed_paths(0, 10)
+path = paths.choice()
 for i,path in enumerate(paths):
     print(dl.original_path(path))
     if i == 9: break
