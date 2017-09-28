@@ -252,15 +252,16 @@ def original_path(path):
     _path = path[:]
     o_path = []
     v_table = virtual_node_table()
+    v_table_inv = {v:k for k,v in v_table.items()}
+    v_nodes = virtual_nodes()
     for i,j in _path:
-        v_nodes = virtual_nodes()
         if i in v_nodes:
-            o_edge = v_table[i]
-            o_path.append(v_table[i])
+            o_edge = v_table_inv[i]
+            o_path.append(v_table_inv[i])
             _path.remove((o_edge[0], i))
         elif j in v_nodes:
-            o_edge = v_table[j]
-            o_path.append(v_table[j])
+            o_edge = v_table_inv[j]
+            o_path.append(v_table_inv[j])
             _path.remove((j, o_edge[1]))
         else:
             o_path.append((i,j))
