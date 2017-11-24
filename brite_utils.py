@@ -1,7 +1,7 @@
 """
 author mio kinno
 date 2017.10.26
-file brite_conv_utils.py
+file brite_utils.py
 """
 
 from itertools import permutations
@@ -21,7 +21,7 @@ class BRITEParser:
       e.g. [[node_i, node_j, cost, capacity]]
     * coordinates
       各ノードのx,y座標を格納した辞書．pandasのDataFrameで読み込める形式
-      e.g. [{"node": "0", "x": 100, "y": 200}]
+      e.g. [{"index": "0", "latitude": 100, "longitude": 200}]
 
     参考
     BRITE/bin/brite2ns.py
@@ -41,20 +41,20 @@ class BRITEParser:
     def _parse(self):
         state = 0
         for line in self.all_lines.splitlines():
-            splited = line.split()
-            if len(splited) == 0 or splited[0][0] == "#":
+            splitted = line.split()
+            if len(splitted) == 0 or splitted[0][0] == "#":
                 continue
             if state == 0:
-                if splited[0] == "Nodes:":
+                if splitted[0] == "Nodes:":
                     state = 1
             elif state == 1:
-                if splited[0] == "Edges:":
+                if splitted[0] == "Edges:":
                     state = 2
                 else:
-                    self.nodes.append(splited[0])
-                    self.coordinates.append({"index": splited[0], "latitude": splited[1], "longitude": splited[2]})
+                    self.nodes.append(splitted[0])
+                    self.coordinates.append({"index": splitted[0], "latitude": splitted[1], "longitude": splitted[2]})
             elif state == 2:
-                self.edges.append([splited[1], splited[2], splited[4], splited[5]])
+                self.edges.append([splitted[1], splitted[2], splitted[4], splitted[5]])
 
 def to_dat(britefile, output):
     """
