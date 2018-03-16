@@ -32,5 +32,4 @@ all_results = []
 for s,t in permutations(G.nodes(), 2):
     paths = dg.directed_paths(G, s, t)
     all_results.append({"start":s, "target":t, "number of paths": len(paths)})
-    # print(s, t, len(paths))
 print(DataFrame(all_results, columns=["start", "target", "number of paths"]))
