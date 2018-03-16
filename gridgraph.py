@@ -48,10 +48,6 @@ class GridGraph:
         TODO: ノード右上に任意の数字のラベルを表示する機能を追加する．
               ノードをキー，数字を値とするoptionalな引数optional_node_labelを利用する．
         """
-        # if figsize:
-        #     plt.figure(figsize=figsize)
-        # else:
-        #     plt.figure(figsize=(self.m, self.n))
         nx.draw_networkx_nodes(self.nx_graph, self.node_pos, node_color='w')
         nx.draw_networkx_labels(self.nx_graph, self.node_pos)
         nx.draw_networkx_edges(self.nx_graph, self.node_pos)
@@ -60,7 +56,6 @@ class GridGraph:
         if subgraph is not None:
             subgraph = nx.Graph(data=subgraph)
             nx.draw_networkx_nodes(subgraph, self.node_pos, node_color='r')
-            # nx.draw_networkx_labels(subgraph, self.node_pos, font_size=10)
             nx.draw_networkx_edges(subgraph, self.node_pos, edgelist=subgraph.edges(), edge_color='r', width=3.0)
             if edge_labels is not None:
                 subgraph_metric = {(e[0],e[1]): edge_labels[e] for e in subgraph.edges()}
@@ -70,4 +65,3 @@ class GridGraph:
                 plt.text(self.node_pos[node][0]+0.1, node_pos[node][1]+0.2, num, fontsize=11)
         plt.xticks([])
         plt.yticks([])
-        # plt.show()
