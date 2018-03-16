@@ -330,7 +330,7 @@ def invalid_direction_elms(start_node, target_node):
 
 def directed_paths(start_node, target_node):
     """
-    有効性を考慮したパスだけを含むグラフセットを返す
+    有向性を考慮したパスだけを含むグラフセットを返す
 
     arguments:
     * start_node(node label)
@@ -360,7 +360,7 @@ def connected_edges(start_node, target_node, num_edges):
 
     returns:
     * di_path(GraphSet)
-      有効性を考慮したパスだけを含むグラフセット
+      有向性を考慮したパスだけを含むグラフセット
     """
     all_nodes = set(original_nodes()) | set(virtual_nodes())
     v_nodes = virtual_nodes()

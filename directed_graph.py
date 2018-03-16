@@ -95,7 +95,7 @@ def invalid_direction_elms(DiGraph, start_node):
 
 def directed_paths(DiGraph, start_node, target_node):
     """
-    有効性を考慮したパスだけを含むグラフセットを返す
+    有向性を考慮したパスだけを含むグラフセットを返す
 
     arguments:
     * DiGraph(networkx directed Graph object)
@@ -104,7 +104,7 @@ def directed_paths(DiGraph, start_node, target_node):
 
     returns:
     * di_paths(graphillion.GraphSet)
-      有効性を考慮したパスだけを含むグラフセット
+      有向性を考慮したパスだけを含むグラフセット
     """
     di_paths = GraphSet.paths(start_node, target_node)
     elms = invalid_direction_elms(DiGraph, start_node)

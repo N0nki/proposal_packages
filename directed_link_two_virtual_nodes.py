@@ -201,7 +201,7 @@ def invalid_direction_elms(start_node, target_node):
 
 def directed_paths(start_node, target_node):
     """
-    有効性を考慮したパスだけを含むグラフセットを返す
+    有向性を考慮したパスだけを含むグラフセットを返す
 
     arguments:
     * start_node(node label)
@@ -209,7 +209,7 @@ def directed_paths(start_node, target_node):
 
     returns:
     * di_paths(GraphSet)
-      有効性を考慮したパスだけを含むグラフセット
+      有向性を考慮したパスだけを含むグラフセット
     """
     elms = invalid_direction_elms(start_node, target_node)
     elms = GraphSet(elms)
