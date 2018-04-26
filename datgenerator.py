@@ -20,9 +20,9 @@ class DatGenerator:
         self.datfile.write("/* name {} */\n\n".format(self.datfile_name))
 
         # dk, m, n
-        self.datfile.write("param dk:=1\n")
-        self.datfile.write("param m:={}\n".format(len(self.traffic)-1))
-        self.datfile.write("param n:={}\n".format(len(self.nodes)-1))
+        self.datfile.write("param dk:=1;\n")
+        self.datfile.write("param m:={};\n".format(len(self.traffic)-1))
+        self.datfile.write("param n:={};\n".format(len(self.nodes)-1))
 
         # HOP
         self.datfile.write("\n/* HOP */\n")
