@@ -67,7 +67,7 @@ class Dat:
                    "n":        r"param n\s*:=\s*(\d+);",
                    "hop":      r"param : EN\s*:\s*HOP\s*:=",
                    "cost":     r"param : EM\s*:\s*COST\s*:=\s*",
-                   "capacity": r"param : E\s*:\s*c\s*:=",
+                   "capacity": r"param : E\s*:\s*[cC]\s*:=",
                    "start":    r"param : SK\s*:\s*s\s*:=",
                    "target":   r"param : TK\s*:\s*t\s*:=",
                    "DK":       r"param : DK\s*:\s*d\s*:="}
