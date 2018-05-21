@@ -112,6 +112,20 @@ def devide_virtual_node(v_node):
     j = j // VIRTUAL_NODE_DIGIT_J
     return (i, j)
 
+def virtual_node_iter():
+    """
+    仮想ノードを返すジェネレータ
+
+    yields:
+    * (i, j, cost)(tuple)
+      i,jはvirtual_node_expressionで使用するノードラベル
+      costは仮想ノードを設けることで発生するリンクに付与する重み
+    """
+    d = edges_table()
+    for e1,e2 in d.values():
+        i, j, cost = e2[0], e2[1], e2[2]
+        yield (i, j, cost)
+
 def append_virtual_nodes():
     """
     仮想ノードを追加したグラフの辺のリストを返す
@@ -136,10 +150,8 @@ def virtual_node_edges():
     * edges(edge list)
       仮想ノードを含むリンクを格納したリスト
     """
-    d = edges_table()
     edges = []
-    for e1,e2 in d.values():
-        i, j, cost = e2[0], e2[1], e2[2]
+    for i,j,cost in virtual_node_iter():
         v = virtual_node_expression(i, j)
         edges += [[(i, v)], [(v, j)]]
     return edges
@@ -152,10 +164,8 @@ def virtual_node_table():
     * v_table(dict)
     """
     v_table = {}
-    d = edges_table()
     edges = []
-    for e1,e2 in d.values():
-        i, j, cost = e2[0], e2[1], e2[2]
+    for i,j,cost in virtual_node_iter():
         v = virtual_node_expression(i, j)
         v_table[(i,j)] = v
     return v_table
@@ -168,10 +178,8 @@ def virtual_nodes():
     * virtual_nodes(nodes list)
       仮想ノードを格納したリスト
     """
-    d = edges_table()
     v_nodes = []
-    for e1,e2 in d.values():
-        i, j, cost = e2[0], e2[1], e2[2]
+    for i,j,cost in virtual_node_iter():
         v_nodes.append(virtual_node_expression(i, j))
     return v_nodes
 
