@@ -68,3 +68,4 @@ class GridGraph:
                 plt.text(self.node_pos[node][0]+0.1, self.node_pos[node][1]+0.2, num, fontsize=11)
         plt.xticks([])
         plt.yticks([])
+        plt.show()
