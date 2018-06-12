@@ -22,7 +22,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from dat_utils import Dat
+from proposal_packages.dat_utils import Dat
 
 # パスのデフォルト値
 coordinate_path = "../model_data_coordinates/"
