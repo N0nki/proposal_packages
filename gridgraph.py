@@ -42,7 +42,7 @@ class GridGraph:
             pos[v] = ((v - 1) % n, (m * n - v) // n)
         return pos
 
-    def draw(self, subgraph=None, edge_labels=None, optional_node_label=None):
+    def draw(self, subgraph=None, edge_labels=None, optional_node_label=None, optional_colored_nodes=None):
         """
         格子グラフを描画する
 
@@ -50,12 +50,20 @@ class GridGraph:
         * subgraph(edgelist, optional)
           指定すると、その部分が赤く表示される
         * edge_labels(dict, optional)
+          リンクのラベル
+        * optional_node_label(dict)
+          キーがノード、値がint or floatの辞書
+          ノードの右上にノードに対応する数字を描画する
+        * optional_colored_nodes(list)
+          ノードを格納したリスト
+          指定するとノードを青色で描画する
         """
         nx.draw_networkx_nodes(self.nx_graph, self.node_pos, node_color='w')
         nx.draw_networkx_labels(self.nx_graph, self.node_pos)
         nx.draw_networkx_edges(self.nx_graph, self.node_pos)
         if edge_labels:
             nx.draw_networkx_edge_labels(self.nx_graph, self.node_pos, edge_labels=edge_labels, font_size=8)
+
         if subgraph is not None:
             subgraph = nx.Graph(data=subgraph)
             nx.draw_networkx_nodes(subgraph, self.node_pos, node_color='r')
@@ -63,9 +71,17 @@ class GridGraph:
             if edge_labels is not None:
                 subgraph_metric = {(e[0],e[1]): edge_labels[e] for e in subgraph.edges()}
                 nx.draw_networkx_edge_labels(subgraph, self.node_pos, edge_labels=subgraph_metric, font_color='r', font_size=8)
+
         if optional_node_label is not None:
             for node, num in optional_node_label.values():
                 plt.text(self.node_pos[node][0]+0.1, self.node_pos[node][1]+0.2, num, fontsize=11)
+
+        if optional_colored_nodes is not None:
+            node_graph = nx.Graph()
+            for node in optional_colored_nodes:
+                node_graph.add_node(node)
+            nx.draw_networkx_nodes(node_graph, self.node_pos, node_color="b")
+            nx.draw_networkx_labels(node_graph, self.node_pos)
+
         plt.xticks([])
         plt.yticks([])
-        plt.show()
