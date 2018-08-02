@@ -81,7 +81,7 @@ class TestDirectedLink:
         for node in [4200, 4300]:
             ok_(node in neighbors4)
 
-    def test_external_edges(node):
+    def test_external_edges(self, node):
         external1 = dl.external_edges(1)
         for edge in [[(1,2)], [(1,3)]]:
             ok_(edge in external1)
