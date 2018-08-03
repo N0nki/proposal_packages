@@ -33,13 +33,19 @@ class TestGraphillionUtils:
         eq_(gu.degree(4), 2)
 
     def test_flatten_paths(self):
-        pass
+        paths = GraphSet.paths(1, 4)
+        edges = []
+        for path in paths:
+            for edge in path:
+                edges.append(edge)
+        eq_(gu.flatten_paths(paths), edges)
 
     def test_min_hop(self):
-        pass
+        eq_(gu.min_hop((1, 4)), 2)
+
 
     def test_max_hop(self):
-        pass
+        eq_(gu.max_hop((1, 4)), 3)
 
     def test_hamming(self):
         pass
