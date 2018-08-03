@@ -5,6 +5,7 @@ branch master
 file test_directed_link.py
 
 以下のグラフを使用する
+ただし，リンクは双方向とする
 1----2
 |   /|
 |  / |
