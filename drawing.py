@@ -77,9 +77,7 @@ def get_node_pos(model):
             "jpn48":   coordinate_path + "jpn48_coordinates.csv",
             "nsfnet":  coordinate_path + "NSFNET_coordinates.csv",
             "akita":   coordinate_path + "akita_cities_coordinates.csv"}
-    csv = pd.read_csv(data[model])
-    coordinates = zip(csv["longitude"], csv["latitude"])
-    pos = {city: coordinate for city,coordinate in zip(csv["index"], coordinates)}
+    pos = create_node_pos_from_coordinate_csv(data[model])
     return pos
 
 def model_data_graph(model):
@@ -99,42 +97,61 @@ def model_data_graph(model):
             "jpn48":   model_path + "JPNM/JPN48/JPN48_EQ_200.dat",
             "nsfnet":  model_path + "NSFNET/nsfnet_EQ_200.dat",
             "akita":   model_path + "Akita/akita_TE.dat"}
-    model_data = Dat(data[model])
+    G = create_graph_from_dat(data[model])
+    return G
+
+def create_node_pos_from_coordinate_csv(coordinate_csv):
+    data = pd.read_csv(coordinate_csv)
+    coordinates = zip(data["longitude"], data["latitude"])
+    pos = {index: coordinate for index, coordinate in zip(data["index"], coordinates)}
+    return pos
+
+def create_graph_from_dat(dat):
+    model_data = Dat(dat)
     edges = model_data.read_params("cost", lambda p: (int(p[0]), int(p[1])))
     G = nx.Graph(data=edges)
     return G
 
-def draw_model_data(model, path=None, figsize=None, savefig=False):
+def draw_graph(G, pos, subgraph=None, figsize=None, figname=None, jupyterinline=False):
     """
-    モデルデータを描画する
-
-    arguments:
-    * model(string)
-    * path(list optional)
-      辺を表すタプルを要素とするリスト
-      pathを指定するとpathに含まれるノードと辺が赤く描画される
-    * figsize(tuple optional)
-      描画する図の大きさ
-      (width, height)の形式
+    グラフを描画する
     """
-    pos = get_node_pos(model)
-    G = model_data_graph(model)
     node_label = {node: node for node in G.nodes()}
     if figsize is not None:
         plt.figure(figsize=figsize)
     nx.draw_networkx_nodes(G, pos, node_color="w")
     nx.draw_networkx_labels(G, pos, font_size=10)
     nx.draw_networkx_edges(G, pos)
-    if path is not None:
-        nx.draw_networkx_nodes(nx.Graph(data=path), pos, node_color="r")
-        nx.draw_networkx_labels(nx.Graph(data=path), pos, font_size=10, labels=node_label)
-        nx.draw_networkx_edges(nx.Graph(data=path), pos, edgelist=path,
+    if subgraph is not None:
+        nx.draw_networkx_nodes(nx.Graph(data=subgraph), pos, node_color="r")
+        nx.draw_networkx_labels(nx.Graph(data=subgraph), pos, font_size=10, labels=node_label)
+        nx.draw_networkx_edges(nx.Graph(data=subgraph), pos, edgelist=subgraph,
                                edge_color="r", width=3.0)
     plt.xticks([])
     plt.yticks([])
-    if savefig:
-        plt.savefig("./model_{}.png".format(model), dpi=400, bbox_inches="tight", transparent=True)
-    plt.show()
+
+    if figname is not None:
+        plt.savefig("./{}.png".format(figname), dpi=400, bbox_inches="tight", transparent=True)
+
+    if not jupyterinline:
+        plt.show()
+
+def draw_model_data(model, subgraph=None, figsize=None, figname=False, jupyterinline=False):
+    """
+    モデルデータを描画する
+
+    arguments:
+    * model(string)
+    * subgraph(edge list optional)
+      部分グラフを表す辺を要素とするリスト
+      subgraphを指定するとsubgraphに含まれるノードと辺が赤く描画される
+    * figsize(tuple optional)
+      描画する図の大きさ
+      (width, height)の形式
+    """
+    pos = get_node_pos(model)
+    G = model_data_graph(model)
+    draw_graph(pos, G, subgraph, figsize, figname, jupyterinline)
 
 if __name__ == '__main__':
     # 動作確認
@@ -143,5 +160,5 @@ if __name__ == '__main__':
     # G1 = nx.Graph(data=list(cost239_edges))
     # G = model_data_graph("akita")
     # print(G.edges(), G.nodes())
-    draw_model_data("jpn25", figsize=(12, 9), path=[(0,1),(1,2)])
-    draw_model_data("cost239", figsize=(9, 6), path=[(0,1),(1,2)])
+    draw_model_data("jpn25", figsize=(12, 9), subgraph=[(0,1),(1,2)])
+    draw_model_data("cost239", figsize=(9, 6), subgraph=[(0,1),(1,2)])
