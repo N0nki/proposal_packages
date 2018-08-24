@@ -47,6 +47,15 @@ class TestGraphillionUtils:
     def test_max_hop(self):
         eq_(gu.max_hop((1, 4)), 3)
 
+    def test_get_min_hop_paths(self):
+        pass
+
+    def test_excluding_multi_elms(self):
+        pass
+
+    def test_select_sleep_nodes(self):
+        pass
+
     def test_hamming(self):
         pass
 
