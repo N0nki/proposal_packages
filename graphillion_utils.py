@@ -6,6 +6,7 @@ File: graphillion_utils.py
 graphillionを操作しているときによく使う機能をまとめたモジュール
 """
 
+import random
 from graphillion import GraphSet
 
 def degree(node):
@@ -42,6 +43,51 @@ def max_hop(terminal):
     """
 
     return len(next(GraphSet.paths(terminal[0], terminal[1]).max_iter()))
+
+def get_min_hop_paths(paths, terminal):
+    """
+    最小ホップ数のパス集合を返す
+
+    arguments:
+    * paths(graphset)
+    * terminal(tuple (s, t), including start and target node)
+
+    returns:
+    * min_hop_paths(graphset)
+    """
+
+    return paths.graph_size(min_hop(terminal))
+
+def excluding_multi_elms(graphset, elms):
+    """
+    複数のグラフ要素をグラフセットから削除する
+
+    arguments:
+    * graphset(graphset)
+    * elms(graph elements, node, edge, graph, graphset)
+
+    returns:
+    * graphset(graphset)
+    """
+
+    for elm in elms:
+        graphset = graphset.excluding(elm)
+
+    return graphset
+
+def select_sleep_nodes(nodes, terminal, num):
+    """
+    スリープするノードを決定する
+
+    arguments:
+    * nodes(node list)
+    * terminal(tuple (s, t), including start and target node)
+    * num(int)
+      スリープするノードの数
+    """
+
+    candidate = set(nodes) - set(terminal)
+    return random.sample(candidate, k=num)
 
 def hamming(graphset, G, upper_limit):
     pass
