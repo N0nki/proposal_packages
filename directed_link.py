@@ -142,6 +142,25 @@ def append_virtual_nodes():
         virtual_nodes_graph += [e1, (i, v, cost), (v, j, 0)]
     return virtual_nodes_graph
 
+def append_virtual_nodes2():
+    """
+    仮想ノードの追加を別のルールで行う
+
+    * リンク(i,j,cost1)に対して
+      仮想ノードi_jを設ける
+      リンク(i,i_j,cost2),(i_j,j,0)を追加する
+
+    * リンク(j,i,cost2)に対して
+      仮想ノードを設けずにリンク(j,i,cost2)をそのまま使用する
+    """
+    d = edges_table()
+    virtual_nodes_graph = []
+    for e1,e2 in d.values():
+        i, j, cost = e1[0], e1[1], e1[2]
+        v = virtual_node_expression(i, j)
+        virtual_nodes_graph += [(i, v, cost), (v, j, 0), e2]
+    return virtual_nodes_graph
+
 def virtual_node_edges():
     """
     仮想ノードを含むリンクを返す
@@ -555,6 +574,7 @@ if __name__ == "__main__":
 
     print("edges_table", edges_table())
     print("append_virtual_nodes", append_virtual_nodes())
+    print("append_virtual_nodes2", append_virtual_nodes2())
     print("universe", GraphSet.universe())
     print("virtual_node_edges", virtual_node_edges())
     print("virtual_nodes", virtual_nodes())
