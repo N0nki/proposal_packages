@@ -85,3 +85,31 @@ class GridGraph:
 
         plt.xticks([])
         plt.yticks([])
+
+    def draw_multi_subgraphs(self, subgraphs, colors=None):
+        """
+        複数のサブグラフを1つの図にまとめて描画する
+
+        arguments:
+        * subgraphs(edgelist list)
+          edgelistを複数格納したlistを指定する
+        * colors(list, optional)
+          描画するサブグラフの色情報を格納したlistを指定する
+          色はlistの先頭要素から順に使用される
+
+        TODO: 2018.9.4
+        drawメソッドとまとめる
+        """
+        if colors is None:
+            colors = ["r", "g", "b", "c", "m", "y"]
+
+        nx.draw_networkx_nodes(self.nx_graph, self.node_pos, node_color='w')
+        nx.draw_networkx_labels(self.nx_graph, self.node_pos)
+        nx.draw_networkx_edges(self.nx_graph, self.node_pos)
+        for i, subgraph in enumerate(subgraphs):
+            subgraph = nx.Graph(data=subgraph)
+            nx.draw_networkx_nodes(subgraph, self.node_pos, node_color=colors[i])
+            nx.draw_networkx_edges(subgraph, self.node_pos, edgelist=subgraph.edges(), edge_color=colors[i], width=3.0)
+
+        plt.xticks([])
+        plt.yticks([])
