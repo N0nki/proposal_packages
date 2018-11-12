@@ -65,12 +65,12 @@ class GridGraph:
             nx.draw_networkx_edge_labels(self.nx_graph, self.node_pos, edge_labels=edge_labels, font_size=8)
 
         if subgraph is not None:
-            subgraph = nx.Graph(data=subgraph)
-            nx.draw_networkx_nodes(subgraph, self.node_pos, node_color='r')
-            nx.draw_networkx_edges(subgraph, self.node_pos, edgelist=subgraph.edges(), edge_color='r', width=3.0)
+            nx_subgraph = nx.Graph(data=subgraph)
+            nx.draw_networkx_nodes(nx_subgraph, self.node_pos, node_color='r')
+            nx.draw_networkx_edges(nx_subgraph, self.node_pos, edgelist=subgraph, edge_color='r', width=3.0)
             if edge_labels is not None:
-                subgraph_metric = {(e[0],e[1]): edge_labels[e] for e in subgraph.edges()}
-                nx.draw_networkx_edge_labels(subgraph, self.node_pos, edge_labels=subgraph_metric, font_color='r', font_size=8)
+                subgraph_metric = {(e[0], e[1]): edge_labels[e] for e in subgraph}
+                nx.draw_networkx_edge_labels(nx_subgraph, self.node_pos, edge_labels=subgraph_metric, font_color='r', font_size=8)
 
         if optional_node_label is not None:
             for node, num in optional_node_label.values():
